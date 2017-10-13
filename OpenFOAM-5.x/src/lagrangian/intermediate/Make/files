@@ -44,11 +44,15 @@ $(REACTINGMPPARCEL)/defineBasicReactingMultiphaseParcel.C
 $(REACTINGMPPARCEL)/makeBasicReactingMultiphaseParcelSubmodels.C
 
 
+/* platelet parcel */
+PLATELETPARCEL=$(DERIVEDPARCELS)/basicPlateletParcel
+$(PLATELETPARCEL)/defineBasicPlateletParcel.C
+$(PLATELETPARCEL)/makeBasicPlateletParcelSubmodels.C
+
 /* kinematic MPPIC parcel sub-models */
 KINEMATICMPPICPARCEL=$(DERIVEDPARCELS)/basicKinematicMPPICParcel
 $(KINEMATICMPPICPARCEL)/defineBasicKinematicMPPICParcel.C
 $(KINEMATICMPPICPARCEL)/makeBasicKinematicMPPICParcelSubmodels.C
-
 
 /* bolt-on models */
 RADIATION=submodels/addOns/radiation

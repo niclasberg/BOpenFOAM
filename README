@@ -1,3 +1,0 @@
-# BOpenFOAM
-
-Modified version of OpenFOAM 5.x, added support for hematocrit dependent viscosity and platelet activation.
