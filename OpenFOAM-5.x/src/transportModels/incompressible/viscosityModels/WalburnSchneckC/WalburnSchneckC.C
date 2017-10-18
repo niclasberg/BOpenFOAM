@@ -47,42 +47,28 @@ namespace viscosityModels
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField>
-Foam::viscosityModels::WalburnSchneckC::calcNu() const
+void Foam::viscosityModels::WalburnSchneckC::correct()
 {
-    return max
-    (
-        nuMin_,
-        min
-        (
-            nuMax_,
-            C1_
-	    *exp
-	    (scalar(0.0608)
-	    *scalar(100.0)*min(max(VF(), scalar(0.25)), scalar(1))
-	    )
-	    *exp
-	    (scalar(14.585)*TPMA_ 
-	    / sqr(scalar(100.0)*min(max(VF(), scalar(0.25)), scalar(1)))
-	    )
-	    /( rho1_*min(max(VF(), scalar(0.25)), scalar(1))
-	    + rho2_*(scalar(1.0)-min(max(VF(), scalar(0.25)), scalar(1)))
-	     )
-	    *pow
-            (
-                max
-                (
-                    dimensionedScalar("one", dimTime, 1.0)*strainRate(),
-                    dimensionedScalar("VSMALL", dimless, VSMALL)
-                ),
-                (scalar(1.0) 
-		- scalar(0.00499) 
-		*scalar(100.0)*min(max(VF(), scalar(0.25)), scalar(1))
-		- scalar(1.0)
+	volScalarField alpha1LimitedPercent(
+			scalar(100.0)*min(max(VF(), scalar(0.25)), scalar(1))
+	);
+
+    this->mu_ = max(
+		muMin_,
+		min(
+			muMax_,
+			C1_*exp(0.0608*alpha1LimitedPercent)
+			*exp(14.585 * TPMA_/ sqr(alpha1LimitedPercent))
+			*pow(
+				max
+				(
+					dimensionedScalar("one", dimTime, 1.0)*strainRate(),
+					dimensionedScalar("VSMALL", dimless, VSMALL)
+				),
+				(-scalar(0.00499) * alpha1LimitedPercent)
+			)
 		)
-            )
-        )
-    );
+	);
 }
 
 
@@ -97,28 +83,15 @@ Foam::viscosityModels::WalburnSchneckC::WalburnSchneckC
     const volScalarField& alpha1
 )
 :
-
     viscosityModelC(name, viscosityProperties, U, phi, alpha1),
     WalburnSchneckCCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
     C1_(WalburnSchneckCCoeffs_.lookup("C1")),
     TPMA_(WalburnSchneckCCoeffs_.lookup("TPMA")),
-    nuMin_(WalburnSchneckCCoeffs_.lookup("nuMin")),
-    nuMax_(WalburnSchneckCCoeffs_.lookup("nuMax")),
-    rho1_(WalburnSchneckCCoeffs_.lookup("rho1")),
-    rho2_(WalburnSchneckCCoeffs_.lookup("rho2")),
-    nu_
-    (
-        IOobject
-        (
-            name,
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        calcNu()
-    )
-{}
+    muMin_(WalburnSchneckCCoeffs_.lookup("muMin")),
+    muMax_(WalburnSchneckCCoeffs_.lookup("muMax"))
+{
+	this->correct();
+}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -134,10 +107,8 @@ bool Foam::viscosityModels::WalburnSchneckC::read
 
     WalburnSchneckCCoeffs_.lookup("C1") >> C1_;
     WalburnSchneckCCoeffs_.lookup("TPMA") >> TPMA_;
-    WalburnSchneckCCoeffs_.lookup("nuMin") >> nuMin_;
-    WalburnSchneckCCoeffs_.lookup("nuMax") >> nuMax_;
-    WalburnSchneckCCoeffs_.lookup("rho1") >> rho1_;
-    WalburnSchneckCCoeffs_.lookup("rho2") >> rho2_;
+    WalburnSchneckCCoeffs_.lookup("muMin") >> muMin_;
+    WalburnSchneckCCoeffs_.lookup("muMax") >> muMax_;
 
     return true;
 }

@@ -51,7 +51,21 @@ Foam::viscosityModelC::viscosityModelC
     viscosityProperties_(viscosityProperties),
     U_(U),
     phi_(phi),
-    alpha1_(alpha1)
+    alpha1_(alpha1),
+    mu_
+    (
+        IOobject
+        (
+            name,
+            U_.time().timeName(),
+            U_.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        U_.mesh(),
+        dimensionedScalar("mu", dimensionSet(1, -1, -1, 0, 0), 0),
+        calculatedFvPatchScalarField::typeName
+    )
 {}
 
 

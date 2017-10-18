@@ -52,21 +52,11 @@ Foam::viscosityModels::NewtonianC::NewtonianC
 )
 :
     viscosityModelC(name, viscosityProperties, U, phi, alpha1),
-    nu0_(viscosityProperties_.lookup("nu")),
-    nu_
-    (
-        IOobject
-        (
-            name,
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        U_.mesh(),
-        nu0_
-    )
-{}
+    newtonianCCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
+    mu0_(newtonianCCoeffs_.lookup("mu"))
+{
+	this->mu_ = mu0_;
+}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -77,9 +67,9 @@ bool Foam::viscosityModels::NewtonianC::read
 )
 {
     viscosityModelC::read(viscosityProperties);
-
-    viscosityProperties_.lookup("nu") >> nu0_;
-    nu_ = nu0_;
+    newtonianCCoeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
+    newtonianCCoeffs_.lookup("mu") >> mu0_;
+    this->mu_ = mu0_;
 
     return true;
 }

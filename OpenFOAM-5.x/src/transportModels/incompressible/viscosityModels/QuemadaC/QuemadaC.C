@@ -60,24 +60,7 @@ Foam::viscosityModels::QuemadaC::QuemadaC
     viscosityModelC(name, viscosityProperties, U, phi, alpha1),
     QuemadaCCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
     mup_(QuemadaCCoeffs_.lookup("mup")),
-    nuMax_(QuemadaCCoeffs_.lookup("nuMax")),
-    rho1_(QuemadaCCoeffs_.lookup("rho1")),
-    rho2_(QuemadaCCoeffs_.lookup("rho2")),
-    nu_
-    (
-        IOobject
-        (
-            name,
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        U_.mesh(),
-        dimensionedScalar("nu", dimensionSet(0, 2, -1, 0, 0), 0),
-        calculatedFvPatchScalarField::typeName
-    )
-	
+    muMax_(QuemadaCCoeffs_.lookup("muMax"))
 {
 	correct();
 }
@@ -88,12 +71,13 @@ Foam::viscosityModels::QuemadaC::QuemadaC
 void Foam::viscosityModels::QuemadaC::correct()
 {
 	const volScalarField limitedVF( min(max(VF(), scalar(0)), scalar(1)) );
-	const volScalarField k0 = exp(3.874 - 10.41*limitedVF + 13.8*pow(limitedVF, 2.0) - 6.738*pow(limitedVF,3.0));
-	const volScalarField kinf = exp(1.3435 - 2.803*limitedVF + 2.711*pow(limitedVF, 2.0) - 0.6479*pow(limitedVF, 3.0));
-	const volScalarField sqrtGammaOverGammaC = sqrt(max(dimensionedScalar("one", dimTime, 1.0)*strainRate(), dimensionedScalar("VSMALL", dimless, VSMALL)) 
-			/ exp(-6.1508 + 27.923*limitedVF - 25.6 * pow(limitedVF, 2.0) + 3.697 * pow(limitedVF, 3.0)));
+	const volScalarField k0 = exp(3.874 - 10.41*limitedVF + 13.8*pow(limitedVF, 2) - 6.738*pow(limitedVF,3));
+	const volScalarField kinf = exp(1.3435 - 2.803*limitedVF + 2.711*pow(limitedVF, 2) - 0.6479*pow(limitedVF, 3));
+	const volScalarField sqrtGammaOverGammaC =
+			sqrt(max(dimensionedScalar("one", dimTime, 1.0)*strainRate(), dimensionedScalar("VSMALL", dimless, VSMALL))
+			/ exp(-6.1508 + 27.923*limitedVF - 25.6 * pow(limitedVF, 2) + 3.697 * pow(limitedVF, 3)));
 
-    nu_ = min(nuMax_, mup_ * pow(1.0 - 0.5 * limitedVF * (k0 + kinf*sqrtGammaOverGammaC) / (1.0 + sqrtGammaOverGammaC), -2.0) / (rho1_*limitedVF + rho2_*(1.0 - limitedVF)));
+    this->mu_ = min(muMax_, mup_ * pow(1.0 - 0.5 * limitedVF * (k0 + kinf*sqrtGammaOverGammaC) / (1.0 + sqrtGammaOverGammaC), -2.0));
 }
 
 bool Foam::viscosityModels::QuemadaC::read
@@ -106,9 +90,7 @@ bool Foam::viscosityModels::QuemadaC::read
     QuemadaCCoeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
 
     QuemadaCCoeffs_.lookup("mup") >> mup_;
-    QuemadaCCoeffs_.lookup("nuMax") >> nuMax_;
-    QuemadaCCoeffs_.lookup("rho1") >> rho1_;
-    QuemadaCCoeffs_.lookup("rho2") >> rho2_;
+    QuemadaCCoeffs_.lookup("muMax") >> muMax_;
 
     return true;
 }

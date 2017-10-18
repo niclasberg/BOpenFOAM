@@ -40,7 +40,7 @@ namespace Foam
 
 void Foam::vfDependentViscosityTwoPhaseMixture::calcNu()
 {
-    nuModel_->correct();
+    muModel_->correct();
 
     const volScalarField limitedAlpha1
     (
@@ -74,11 +74,11 @@ Foam::vfDependentViscosityTwoPhaseMixture::vfDependentViscosityTwoPhaseMixture
     ),
     twoPhaseMixture(U.mesh(), *this),
 
-    nuModel_
+    muModel_
     (
         viscosityModelC::New
         (
-            "nu",
+            "mu1",
             *this,
             U,
             phi,
@@ -98,7 +98,9 @@ Foam::vfDependentViscosityTwoPhaseMixture::vfDependentViscosityTwoPhaseMixture
         (
             "nu",
             U_.time().timeName(),
-            U_.db()
+            U_.db(),
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
         ),
         U_.mesh(),
         dimensionedScalar("nu", dimViscosity, 0),
@@ -111,39 +113,16 @@ Foam::vfDependentViscosityTwoPhaseMixture::vfDependentViscosityTwoPhaseMixture
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField>
-Foam::vfDependentViscosityTwoPhaseMixture::mu() const
-{
-    const volScalarField limitedAlpha1
-    (
-        min(max(alpha1_, scalar(0)), scalar(1))
-    );
-
-    return tmp<volScalarField>
-    (
-        new volScalarField
-        (
-            "mu",
-            (limitedAlpha1*rho1_ + (scalar(1) - limitedAlpha1)*rho2_)*nuModel_->nu()
-        )
-    );
-}
-
 
 Foam::tmp<Foam::surfaceScalarField>
 Foam::vfDependentViscosityTwoPhaseMixture::muf() const
 {
-    const surfaceScalarField alpha1f
-    (
-        min(max(fvc::interpolate(alpha1_), scalar(0)), scalar(1))
-    );
-
     return tmp<surfaceScalarField>
     (
         new surfaceScalarField
         (
             "muf",
-            (alpha1f*rho1_ + (scalar(1) - alpha1f)*rho2_)*fvc::interpolate(nuModel_->nu())
+            fvc::interpolate(mu())
         )
     );
 }
@@ -157,7 +136,7 @@ Foam::vfDependentViscosityTwoPhaseMixture::nuf() const
         new surfaceScalarField
         (
             "nuf",
-            fvc::interpolate(nuModel_->nu())
+            fvc::interpolate(nu())
         )
     );
 }
@@ -167,7 +146,7 @@ bool Foam::vfDependentViscosityTwoPhaseMixture::read()
 {
     if (regIOobject::read())
     {
-        if(nuModel_().read(*this))
+        if(muModel_().read(*this))
         {
         	subDict(phase1Name_).lookup("rho") >> rho1_;
         	subDict(phase2Name_).lookup("rho") >> rho2_;

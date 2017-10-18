@@ -61,18 +61,8 @@ class WalburnSchneckC
 
         dimensionedScalar C1_;
         dimensionedScalar TPMA_;
-        dimensionedScalar nuMin_;
-        dimensionedScalar nuMax_;
-        dimensionedScalar rho1_;
-        dimensionedScalar rho2_;
-
-        volScalarField nu_;
-
-    // Private Member Functions
-
-        //- Calculate and return the laminar viscosity
-        tmp<volScalarField> calcNu() const;
-
+        dimensionedScalar muMin_;
+        dimensionedScalar muMax_;
 
 public:
 
@@ -89,7 +79,7 @@ public:
             const dictionary& viscosityProperties,
             const volVectorField& U,
             const surfaceScalarField& phi,
-	    const volScalarField& alpha1
+            const volScalarField& alpha1
         );
 
 
@@ -100,23 +90,8 @@ public:
 
     // Member Functions
 
-        //- Return the laminar viscosity
-        tmp<volScalarField> nu() const
-        {
-            return nu_;
-        }
-
-        //- Return the laminar viscosity for patch
-        tmp<scalarField> nu(const label patchi) const
-        {
-            return nu_.boundaryField()[patchi];
-        }
-
         //- Correct the laminar viscosity
-        void correct()
-        {
-            nu_ = calcNu();
-        }
+        void correct();
 
         //- Read transportProperties dictionary
         bool read(const dictionary& viscosityProperties);

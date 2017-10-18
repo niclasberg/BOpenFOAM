@@ -60,7 +60,7 @@ protected:
 
     // Protected data
 
-        autoPtr<viscosityModelC> nuModel_;
+        autoPtr<viscosityModelC> muModel_;
 
         dimensionedScalar rho1_;
         dimensionedScalar rho2_;
@@ -100,9 +100,9 @@ public:
     // Member Functions
 
         //- Return const-access to phase1 viscosityModel
-        const viscosityModelC& nuModel() const
+        const viscosityModelC& muModel() const
         {
-            return nuModel_();
+            return muModel_();
         }
 
         //- Return const-access to phase1 density
@@ -124,7 +124,10 @@ public:
         }
 
         //- Return the dynamic laminar viscosity
-        tmp<volScalarField> mu() const;
+        tmp<volScalarField> mu() const
+		{
+        	return muModel_->mu();
+		}
 
         //- Return the face-interpolated dynamic laminar viscosity
         tmp<surfaceScalarField> muf() const;

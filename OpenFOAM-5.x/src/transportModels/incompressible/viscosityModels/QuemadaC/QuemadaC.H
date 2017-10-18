@@ -60,11 +60,7 @@ class QuemadaC
         dictionary QuemadaCCoeffs_;
 
         dimensionedScalar mup_;
-        dimensionedScalar nuMax_;
-        dimensionedScalar rho1_;
-        dimensionedScalar rho2_;
-
-        volScalarField nu_;
+        dimensionedScalar muMax_;
 
 public:
 
@@ -91,18 +87,6 @@ public:
 
 
     // Member Functions
-
-        //- Return the laminar viscosity
-        tmp<volScalarField> nu() const
-        {
-            return nu_;
-        }
-
-        //- Return the laminar viscosity for patch
-        tmp<scalarField> nu(const label patchi) const
-        {
-            return nu_.boundaryField()[patchi];
-        }
 
         //- Correct the laminar viscosity
         void correct();

@@ -5,7 +5,10 @@ Modified version of OpenFOAM 5.x with added support for hematocrit dependent vis
 The following solvers have been added:
 * vfDependentViscosityFoam
 * vfDependentViscosityLPTFoam
+
 Each solver will soon have a tutorial case.
+
+Some postprocessing tools have also been added:
 
 ## Compilation
 Compile OpenFOAM

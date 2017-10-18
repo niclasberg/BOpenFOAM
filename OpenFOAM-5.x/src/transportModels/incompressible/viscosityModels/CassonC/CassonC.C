@@ -46,30 +46,21 @@ namespace viscosityModels
 
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
-
-Foam::tmp<Foam::volScalarField>
-Foam::viscosityModels::CassonC::calcNu() const
+void Foam::viscosityModels::CassonC::correct()
 {
-    dimensionedScalar tone("tone", dimTime, 1.0);
-    dimensionedScalar rtone("rtone", dimless/dimTime, 1.0);
-    tmp<volScalarField> sr(strainRate());
-    return (min(nuMax_, sqr( (B_ / A_) 
-	    * (scalar(1.0) / pow(scalar(1.0) 
-		   - min(max(VF(), scalar(0)), scalar(1)),
-		   ( A_ / scalar(2.0))) - scalar(1.0) )
-	   * scalar(1.0) /pow(max(sr(), dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)),
-		( scalar(1.0) / scalar(2.0)))
+    const volScalarField limitedAlpha1(min(max(this->VF(), scalar(0)), scalar(1)));
+    const volScalarField kC( mup_ / pow(1.0 - limitedAlpha1 , A_ ));
+    const volScalarField tauY((B_ / A_) * ( pow(1 - limitedAlpha1, 0.5*A_) - 1.));
 
-	    + 
-	    sqrt( mup_ / 
-	    pow(scalar(1.0) 
-	 	- min(max(VF(), scalar(0)), scalar(1)),A_ ))
-	 	            ) 
-	         /( rho1_*min(max(VF(), scalar(0)), scalar(1))
-		 + rho2_*(scalar(1.0)-min(max(VF(), scalar(0)), scalar(1)))
-		  )
-	        )
-	    ) ;
+    this->mu_ = min(
+    				muMax_,
+					sqr(
+						sqrt(kC * strainRate()) + sqrt(tauY)
+					) / max(
+						strainRate(),
+						dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
+					)
+				);
 }
 
 
@@ -88,24 +79,12 @@ Foam::viscosityModels::CassonC::CassonC
     viscosityModelC(name, viscosityProperties, U, phi, alpha1),
     CassonCCoeffs_(viscosityProperties.subDict(typeName + "Coeffs")),
     mup_(CassonCCoeffs_.lookup("mup")),
-    nuMax_(CassonCCoeffs_.lookup("nuMax")),
+    muMax_(CassonCCoeffs_.lookup("muMax")),
     A_(CassonCCoeffs_.lookup("A")),
-    B_(CassonCCoeffs_.lookup("B")),
-    rho1_(CassonCCoeffs_.lookup("rho1")),
-    rho2_(CassonCCoeffs_.lookup("rho2")),
-    nu_
-    (
-        IOobject
-        (
-            name,
-            U_.time().timeName(),
-            U_.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        calcNu()
-    )
-{}
+    B_(CassonCCoeffs_.lookup("B"))
+{
+	this->correct();
+}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -120,11 +99,9 @@ bool Foam::viscosityModels::CassonC::read
     CassonCCoeffs_ = viscosityProperties.subDict(typeName + "Coeffs");
 
     CassonCCoeffs_.lookup("mup") >> mup_;
-    CassonCCoeffs_.lookup("nuMax") >> nuMax_;
+    CassonCCoeffs_.lookup("muMax") >> muMax_;
     CassonCCoeffs_.lookup("A") >> A_;
     CassonCCoeffs_.lookup("B") >> B_;
-    CassonCCoeffs_.lookup("rho1") >> rho1_;
-    CassonCCoeffs_.lookup("rho2") >> rho2_;
 
     return true;
 }

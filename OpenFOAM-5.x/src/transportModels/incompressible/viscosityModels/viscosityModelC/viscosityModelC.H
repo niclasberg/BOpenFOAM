@@ -49,7 +49,7 @@ SourceFiles
 #define viscosityModelC_H
 
 #include "dictionary.H"
-#include "volFieldsFwd.H"
+#include "volFields.H"
 #include "surfaceFieldsFwd.H"
 #include "dimensionedScalar.H"
 #include "runTimeSelectionTables.H"
@@ -77,6 +77,7 @@ protected:
         const surfaceScalarField& phi_;
         const volScalarField& alpha1_;
 
+        volScalarField mu_;
 
     // Private Member Functions
 
@@ -157,10 +158,16 @@ public:
         tmp<volScalarField> VF() const;
 
         //- Return the laminar viscosity
-        virtual tmp<volScalarField> nu() const = 0;
+		tmp<volScalarField> mu() const
+		{
+			return mu_;
+		}
 
-        //- Return the laminar viscosity for patch
-        virtual tmp<scalarField> nu(const label patchi) const = 0;
+		//- Return the laminar viscosity for patch
+		tmp<scalarField> mu(const label patchi) const
+		{
+			return mu_.boundaryField()[patchi];
+		}
 
         //- Correct the laminar viscosity
         virtual void correct() = 0;
