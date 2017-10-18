@@ -1,0 +1,72 @@
+#! /bin/sh
+
+if [ -d simpleFunctionObjects ]; then
+    wclean simpleFunctionObjects
+fi
+
+wclean swak4FoamParsers
+
+rm -f swak4FoamParsers/foamVersion4swak.H
+
+rm -rf swak4FoamParsers/Make/filesThatAreOnlyInSomeDistributions/
+
+# otherwise the next compilation will have trouble finding the version-file
+find . -name lnInclude -exec rm -r {} \; -prune
+
+wclean swakLagrangianParser
+
+wclean groovyBC
+
+wclean swakFunctionObjects
+
+wclean simpleSwakFunctionObjects
+
+wclean simpleLagrangianFunctionObjects
+
+wclean simpleSearchableSurfaces
+
+wclean swakTopoSources
+
+wclean swakSourceFields
+
+wclean swakFiniteArea
+
+wclean groovyStandardBCs
+
+wclean swakPythonIntegration
+
+wclean swakFvOptions
+
+(cd functionPlugins; ./Allwclean)
+
+wclean simpleCloudFunctionObjects
+
+wclean swakCloudFunctionObjects
+
+wclean swakStateMachine
+
+wclean swakDynamicMesh
+
+# Remove residual from bison
+rm -f */*.output
+
+if [ "$SWAK_USER_PLUGINS" != "" ]
+then
+    plugins=$(echo $SWAK_USER_PLUGINS | tr ";" "\n")
+
+    for plug in $plugins
+    do
+	echo "Clearing user function-plugin $plug"
+	wclean $plugins
+    done
+fi
+
+rmdepall=rmdepall
+if type wrmdep >/dev/null 2>&1
+then
+    rmdepall="wrmdep -all"
+fi
+
+$rmdepall Libraries/filesThatAreOnlyInSomeDistributions
+
+# -----------------------------------------------------------------------------

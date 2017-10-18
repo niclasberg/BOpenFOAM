@@ -1,0 +1,66 @@
+syntax: glob
+
+*~
+*.dep
+*.output
+*.bak
+
+*.gz
+
+linux*Opt
+linux*Debug
+
+darwin*Opt
+darwin*Debug
+
+lnInclude
+
+ccache4vm
+.vagrant
+
+postProcessing
+
+GTAGS
+GPATH
+GRTAGS
+
+*.tex
+*.pdf
+*.lof
+*.lot
+*.log
+
+auto
+doc
+\#*\#
+# *.orig
+
+debian/rules
+debian/control
+
+swakConfiguration
+foamVersionThisIsCompiledFor
+privateRequirements
+
+Libraries/swak4FoamParsers/foamVersion4swak.H
+
+# PyFoam-Stuff
+PlyParser_*.py
+*.logfile
+*.analyzed
+PyFoamHistory
+PyFoamPrepareCaseParameters*
+PyFoamState.*
+*.foam
+__pycache__
+runOnMac*.sh
+
+# Other stuff we won't need
+*.vtk
+*.deb
+*.E
+*.pyc
+
+# Time directories except 0
+syntax: regexp
+/(0\.[0-9][0-9]*|[1-9][0-9.]*)/

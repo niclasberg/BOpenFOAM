@@ -1,0 +1,17 @@
+general/swakExpressionFunctionObject.C
+general/dumpSwakExpressionFunctionObject.C
+general/dumpSwakGlobalVariableFunctionObject.C
+general/swakExpressionDistributionFunctionObject.C
+general/swakExpressionAverageDistributionFunctionObject.C
+
+general/writeAndEndSwakExpressionFunctionObject.C
+general/writeIfSwakExpressionFunctionObject.C
+
+patch/patchExpressionFunctionObject.C
+patch/patchExpressionDistributionFunctionObject.C
+
+timeManipulation/setDeltaTBySwakExpressionFunctionObject.C
+
+functionObjectProxy/executeIfSwakExpression/executeIfSwakExpressionFunctionObject.C
+
+LIB = $(FOAM_USER_LIBBIN)/libsimpleSwakFunctionObjects

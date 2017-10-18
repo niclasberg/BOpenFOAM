@@ -1,0 +1,61 @@
+include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
+
+ifeq "$(WMAKE_NEW_CONVENTION)" "new"
+  include $(OBJECTS_DIR)/../mybisonNew
+  include $(OBJECTS_DIR)/../myflexNew
+else
+  include $(OBJECTS_DIR)/../mybison
+  include $(OBJECTS_DIR)/../myflex
+
+  sinclude $(OBJECTS_DIR)/../mydependencies
+endif
+
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+else
+LAGRANGIAN_ADDITIONAL_INCLUDES = \
+    -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/SLGThermo/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/solidMixtureProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
+    -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude
+endif
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION) 	\
+    -I../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    $(TRISURFACE_INC) \
+    -I$(LIB_SRC)/thermophysicalModels/pdfs/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/liquids/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/liquidMixture/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/solids/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/solidMixture/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude \
+    $(LAGRANGIAN_ADDITIONAL_INCLUDES) \
+    $(COMPRESSIBLE_TRANSPORT_INC) \
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
+    -I$(LIB_SRC)/lagrangian/solidParticle/lnInclude
+
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lswak4FoamParsers \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling \
+    -llagrangian \
+    -llagrangianIntermediate \
+    $(THERMOPHYSICALFUNCTIONS_LIB) \
+    $(RADIATION_LIB) \
+    -lsolidParticle

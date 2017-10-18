@@ -1,0 +1,8 @@
+#! /bin/sh
+
+for d in `ls | grep swak | grep FunctionPlugin`
+do
+    wclean $d
+done
+
+(cd lagrangianCloudAdaptors; ./Allwclean )

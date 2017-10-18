@@ -1,0 +1,10 @@
+executeFunctionObjectsFvOption.C
+reportAvailableFvOptionsFvOption.C
+reportMatrixFvOption.C
+calcResidualFvOption.C
+
+matrixChange/matrixChangeBaseFvOption.C
+matrixChange/matrixChangeBeforeFvOption.C
+matrixChange/matrixChangeAfterFvOption.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakFvOptions

@@ -1,0 +1,36 @@
+
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
+ifdef NEEDS_FILTER_DROPIN
+ADDITIONALFILES_INC=-I$(LIB_SRC)/OpenFOAM/lnInclude -I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
+endif
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION) 	\
+    -I../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
+    $(FILEFORMATS_INC) \
+    $(FVOPTIONS_INC) \
+    $(TRISURFACE_INC) \
+    -I$(LIB_SRC)/postProcessing/functionObjects/utilities/lnInclude \
+    -I$(LIB_SRC)/functionObjects/utilities/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    $(ADDITIONALFILES_INC)
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lswak4FoamParsers \
+    -lfiniteVolume \
+    -lmeshTools \
+    $(FVOPTIONS_LIB) \
+    -lsampling \
+    -lutilityFunctionObjects \
+    -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
+    -ldynamicMesh \
+    -llagrangian

@@ -1,0 +1,112 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+// writeControl    timeStep;
+writeControl    adjustableRunTime;
+
+// writeInterval   20;
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libgroovyBC.so"
+    "libsimpleFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakPythonIntegration.so"
+);
+
+functions {
+    addSize {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName randomScale;
+        globalScope randomVariables;
+        globalVariables {
+            bcRange {
+                valueType scalar;
+                value 10;
+            }
+            bcMin {
+                valueType scalar;
+                value 10;
+            }
+            internalRange {
+                valueType scalar;
+                value 0.01;
+            }
+        }
+    }
+    changeDeltaT {
+        type setDeltaTByTimeline;
+        deltaTTable {
+            outOfBounds repeat;
+            readerType csv;
+            hasHeaderLine 1;
+            timeColumn 0;
+            valueColumns ( 1 );
+            fileName "$FOAM_CASE/deltaT.csv";
+        }
+    }
+    dynamicFO1 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider fromFileDictionaryProvider;
+        dictionaryFile "$FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO2 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromCommandProvider;
+        theCommand "cat $FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO3 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        scriptCode "print 'functions {}'";
+        interactiveAfterException true;
+        readDuringConstruction true;
+    }
+}
+
+// ************************************************************************* //

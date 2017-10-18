@@ -1,0 +1,21 @@
+#! /bin/sh
+
+wclean funkySetFields
+
+wclean funkySetBoundaryField
+
+wclean replayTransientBC
+
+wclean funkySetAreaFields
+
+wclean funkyDoCalc
+
+wclean calcNonUniformOffsetsForMapped
+
+wclean fieldReport
+
+wclean funkyPythonPostproc
+
+wclean funkySetLagrangianField
+
+wclean funkyWarpMesh

@@ -1,0 +1,6 @@
+#! /bin/bash
+
+for d in `ls | grep CloudAdaptor`
+do
+    wclean $d
+done
