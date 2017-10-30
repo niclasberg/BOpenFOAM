@@ -47,11 +47,11 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#ifdef FOAM_MOVED_TIME_AND_STRING_HEADERS
+/*#ifdef FOAM_MOVED_TIME_AND_STRING_HEADERS
 #include "foamString.H"
-#else
+#else*/
 #include "string.H"
-#endif
+//#endif
 
 #endif
 

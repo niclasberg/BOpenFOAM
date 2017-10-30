@@ -47,12 +47,12 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#ifdef FOAM_MOVED_TIME_AND_STRING_HEADERS
+/*#ifdef FOAM_MOVED_TIME_AND_STRING_HEADERS
 #include "objectRegistry.H"
 #include "foamTime.H"
-#else
+#else*/
 #include "Time.H"
-#endif
+//#endif
 
 #endif
 

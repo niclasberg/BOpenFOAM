@@ -3934,3 +3934,17 @@ S_{expl} + S_{impl} T
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
 # End:
+** Next release - version number : 0.4.2
+*** New supported versions
+**** OpenFOAM+ v1706
+     Minor adaptions were required to make this compile
+**** OpenFOAM 5.0
+     Some adaptions were required to make this compile
+*** Incompatibilities
+*** Bug fixes
+*** Internals (for developers)
+*** Infrastructure
+*** Documentation
+*** New features
+*** Enhancements
+*** Examples
