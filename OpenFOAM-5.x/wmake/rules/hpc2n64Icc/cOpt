@@ -1,0 +1,2 @@
+cDBUG       =
+cOPT        = -O2 -xHost -ftz -fp-speculation=safe -fp-model source -std=c++11 -no-prec-div
