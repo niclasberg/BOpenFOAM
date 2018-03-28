@@ -49,7 +49,6 @@ public:
         //- Convenience typedef for this cloud type
         typedef PlateletCloud<CloudType> plateletCloudType;
 
-
 private:
 
     // Private data

@@ -19,4 +19,3 @@ Foam::PlateletCloud<CloudType>::constProps()
 {
     return constProps_;
 }
-

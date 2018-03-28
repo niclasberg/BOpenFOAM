@@ -1,0 +1,3 @@
+vfDependentViscosityDiffusivityFoam.C 
+
+EXE = $(FOAM_APPBIN)/vfDependentViscosityDiffusivityFoam

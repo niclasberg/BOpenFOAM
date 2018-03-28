@@ -122,10 +122,12 @@ void Foam::PlateletParcel<ParcelType>::writeFields(const CloudType& c)
         i++;
     }
 
-    mechanicalDose.write();
-    pas.write();
-    tau.write();
-	tau_last.write();
+	const bool valid = (np > 0);
+
+    mechanicalDose.write(valid);
+    pas.write(valid);
+    tau.write(valid);
+	tau_last.write(valid);
 }
 
 

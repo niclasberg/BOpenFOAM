@@ -154,6 +154,15 @@ public:
             const label tetPtI
         );
 
+		//- Construct from a position and a cell, searching for the rest of the
+        //  required topology. Other properties are initialised as null.
+        inline PlateletParcel
+        (
+            const polyMesh& mesh,
+            const vector& position,
+            const label celli
+        );
+
         //- Construct from components
         inline PlateletParcel
         (

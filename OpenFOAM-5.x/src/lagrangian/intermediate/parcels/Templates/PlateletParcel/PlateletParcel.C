@@ -17,10 +17,10 @@ void Foam::PlateletParcel<ParcelType>::setCellValues
 	// Store last value
 	tau_last_ = tau_;
 
-	// Interpolate shear stress
+	// Interpolate shear stress tetIndices tetIs = this->currentTetIndices();
     tau_ = td.tauInterp().interpolate
     (
-        this->position(),
+        this->coordinates(),
         this->currentTetIndices()
     );
 }
@@ -36,6 +36,15 @@ void Foam::PlateletParcel<ParcelType>::calc
 {
 	// Run parent calc method
 	ParcelType::calc(td, dt, cellI);
+
+	//typedef typename TrackData::cloudType cloudType;
+	//typedef typename cloudType::activationType activationType;
+
+	//activationType & activation = td.cloud().activation();
+
+	// Evaluate activation 
+	
+	
 
 	// Compute stress magnitude 
 	// OpenFoam computes the tensor magnitude as mag(T) = (T:T)^(1/2)

@@ -54,6 +54,21 @@ inline Foam::PlateletParcel<ParcelType>::PlateletParcel
     tau_last_(symmTensor::zero)
 {}
 
+template<class ParcelType>
+inline Foam::PlateletParcel<ParcelType>::PlateletParcel
+(
+    const polyMesh& owner,
+    const vector& position,
+    const label cellI
+)
+:
+    ParcelType(owner, position, cellI),
+    mechanicalDose_(0.0),
+	pas_(0.0),
+    tau_(symmTensor::zero),
+    tau_last_(symmTensor::zero)
+{}
+
 
 template<class ParcelType>
 inline Foam::PlateletParcel<ParcelType>::PlateletParcel
