@@ -547,7 +547,7 @@ inline void Foam::PackedList<nBits>::const_iterator::operator=
         this->index_ = this->list_->size_;
     }
 
-    return *this;
+    //return *this;
 }
 
 
