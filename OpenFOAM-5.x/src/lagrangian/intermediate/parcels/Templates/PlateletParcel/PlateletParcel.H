@@ -237,7 +237,7 @@ public:
 			const symmTensor& tau() const { return tau_; }
 			scalar& pas() { return pas_; }
 			scalar& mechanicalDose() { return mechanicalDose_; }
-			scalar& tau() { return tau_; }
+			symmTensor& tau() { return tau_; }
 
 
 		//- Main calculation loop

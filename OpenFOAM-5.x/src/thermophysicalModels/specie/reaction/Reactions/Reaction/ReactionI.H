@@ -33,7 +33,7 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class ReactionThermo>
-inline word& Reaction<ReactionThermo>::name()
+inline word Reaction<ReactionThermo>::name()
 {
     return name_;
 }
