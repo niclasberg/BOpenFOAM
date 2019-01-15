@@ -14,7 +14,7 @@ Some postprocessing tools have also been added:
 ## Compilation
 Compile OpenFOAM
 ```
-cd OpenFOAM
+cd OpenFOAM-5.x
 source etc/bashrc
 ./Allwmake
 ```
