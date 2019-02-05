@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "basicPlateletCloud.H"
+#include "../cloud/basicPlateletCloud.H"
 
 #include "makeParcelCloudFunctionObjects.H"
 

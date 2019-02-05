@@ -36,7 +36,7 @@ SourceFiles
 #ifndef WalburnSchneckC_H
 #define WalburnSchneckC_H
 
-#include "viscosityModelC.H"
+#include "../viscosityModelC/viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
 

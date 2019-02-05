@@ -17,8 +17,6 @@ SourceFiles
 #ifndef PlateletCloud_H
 #define PlateletCloud_H
 
-#include "KinematicCloud.H"
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

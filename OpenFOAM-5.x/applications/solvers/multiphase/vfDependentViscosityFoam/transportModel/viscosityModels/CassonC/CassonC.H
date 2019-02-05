@@ -22,21 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::viscosityModels::QuemadaC
+    Foam::viscosityModels::CassonC
 
 Description
-    An incompressible Quemada non-Newtonian viscosity model Coupled (C) to the
+    An incompressible Casson non-Newtonian viscosity model Coupled (C) to the
     suspended phase (alpha1).
 
 SourceFiles
-    QuemadaC.C
+    CassonC.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef QuemadaC_H
-#define QuemadaC_H
+#ifndef CassonC_H
+#define CassonC_H
 
-#include "viscosityModelC.H"
+#include "../viscosityModelC/viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
 
@@ -48,41 +48,44 @@ namespace viscosityModels
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class QuemadaC Declaration
+                           Class CassonC Declaration
 \*---------------------------------------------------------------------------*/
 
-class QuemadaC
+class CassonC
 :
     public viscosityModelC
 {
     // Private data
 
-        dictionary QuemadaCCoeffs_;
+        dictionary CassonCCoeffs_;
 
         dimensionedScalar mup_;
         dimensionedScalar muMax_;
+        dimensionedScalar A_;
+        dimensionedScalar B_;
+
 
 public:
 
     //- Runtime type information
-    TypeName("QuemadaC");
+    TypeName("CassonC");
 
 
     // Constructors
 
         //- Construct from components
-        QuemadaC
+        CassonC
         (
             const word& name,
             const dictionary& viscosityProperties,
             const volVectorField& U,
             const surfaceScalarField& phi,
-	    const volScalarField& alpha1
+            const volScalarField& alpha1
         );
 
 
     //- Destructor
-    ~QuemadaC()
+    ~CassonC()
     {}
 
 

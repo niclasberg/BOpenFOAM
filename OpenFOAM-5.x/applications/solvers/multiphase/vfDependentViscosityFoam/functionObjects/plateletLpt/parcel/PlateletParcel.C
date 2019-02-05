@@ -42,10 +42,6 @@ void Foam::PlateletParcel<ParcelType>::calc
 
 	//activationType & activation = td.cloud().activation();
 
-	// Evaluate activation 
-	
-	
-
 	// Compute stress magnitude 
 	// OpenFoam computes the tensor magnitude as mag(T) = (T:T)^(1/2)
 	//   which gives a factor sqrt(2) error for unidirectional flow fields 

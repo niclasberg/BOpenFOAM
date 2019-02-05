@@ -36,7 +36,7 @@ SourceFiles
 #define incompressibleTwoPhaseMixture_H
 
 #include "incompressible/transportModel/transportModel.H"
-#include "incompressible/viscosityModels/viscosityModelC/viscosityModelC.H"
+#include "../viscosityModels/viscosityModelC/viscosityModelC.H"
 #include "twoPhaseMixture.H"
 #include "IOdictionary.H"
 

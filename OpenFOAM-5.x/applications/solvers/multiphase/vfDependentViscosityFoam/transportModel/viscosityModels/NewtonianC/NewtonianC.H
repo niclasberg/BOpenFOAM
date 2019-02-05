@@ -36,7 +36,7 @@ SourceFiles
 #ifndef NewtonianC_H
 #define NewtonianC_H
 
-#include "viscosityModelC.H"
+#include "../viscosityModelC/viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
 

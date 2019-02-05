@@ -35,7 +35,7 @@ Description
 #include "Cloud.H"
 #include "KinematicCloud.H"
 #include "PlateletCloud.h"
-#include "basicPlateletParcel.H"
+#include "../parcel/basicPlateletParcel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
