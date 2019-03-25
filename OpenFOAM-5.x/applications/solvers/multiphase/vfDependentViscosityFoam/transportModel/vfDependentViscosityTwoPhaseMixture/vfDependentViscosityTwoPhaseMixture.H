@@ -1,42 +1,9 @@
-/*---------------------------------------------------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
-     \\/     M anipulation  |
--------------------------------------------------------------------------------
-License
-    This file is part of OpenFOAM.
+#ifndef vfDependentViscosityTwoPhaseMixture_H
+#define vfDependentViscosityTwoPhaseMixture_H
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
-    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-    for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
-Class
-    Foam::incompressibleTwoPhaseMixture
-
-Description
-    A two-phase incompressible transportModel
-
-SourceFiles
-    incompressibleTwoPhaseMixture.C
-
-\*---------------------------------------------------------------------------*/
-
-#ifndef incompressibleTwoPhaseMixture_H
-#define incompressibleTwoPhaseMixture_H
-
-#include "incompressible/transportModel/transportModel.H"
-#include "../viscosityModels/viscosityModelC/viscosityModelC.H"
+#include "transportModel.H"
+#include "viscosityModelC.H"
+#include "diffusionModel.H"
 #include "twoPhaseMixture.H"
 #include "IOdictionary.H"
 
@@ -45,10 +12,6 @@ SourceFiles
 
 namespace Foam
 {
-
-/*---------------------------------------------------------------------------*\
-                      Class incompressibleTwoPhaseMixture Declaration
-\*---------------------------------------------------------------------------*/
 
 class vfDependentViscosityTwoPhaseMixture
 :
@@ -61,6 +24,7 @@ protected:
     // Protected data
 
         autoPtr<viscosityModelC> muModel_;
+        autoPtr<diffusionModel> diffusionModel_;
 
         dimensionedScalar rho1_;
         dimensionedScalar rho2_;
@@ -104,6 +68,11 @@ public:
         {
             return muModel_();
         }
+
+		const diffusionModel & diffModel() const
+		{
+			return diffusionModel_();
+		}
 
         //- Return const-access to phase1 density
         const dimensionedScalar& rho1() const

@@ -3,11 +3,7 @@
     (
         fvm::ddt(alpha1)
       - fvc::ddt(alpha1)
-      - fvm::laplacian
-        (
-            volScalarField("Dab", Dab + alphatab*turbulence->nut()),
-            alpha1
-        )
+      - twoPhaseProperties.diffModel().divFlux(alpha1)
     );
 
     alpha1Eqn.solve();

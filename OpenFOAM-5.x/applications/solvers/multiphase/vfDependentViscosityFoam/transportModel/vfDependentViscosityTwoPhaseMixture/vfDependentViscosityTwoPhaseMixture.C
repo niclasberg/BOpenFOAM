@@ -86,6 +86,16 @@ Foam::vfDependentViscosityTwoPhaseMixture::vfDependentViscosityTwoPhaseMixture
         )
     ),
 
+	diffusionModel_
+	(
+		diffusionModel::New
+		(
+			*this,
+			U, 
+			phi
+		)
+	),
+
     rho1_("rho", dimDensity, subDict(phase1Name_)),
     rho2_("rho", dimDensity, subDict(phase2Name_)),
 

@@ -1,15 +1,3 @@
-transportModel/viscosityModels/viscosityModelC/viscosityModelC.C
-transportModel/viscosityModels/viscosityModelC/viscosityModelCNew.C
-transportModel/viscosityModels/CassonC/CassonC.C
-transportModel/viscosityModels/NewtonianC/NewtonianC.C
-transportModel/viscosityModels/QuemadaC/QuemadaC.C
-transportModel/viscosityModels/WalburnSchneckC/WalburnSchneckC.C
-transportModel/vfDependentViscosityTwoPhaseMixture/vfDependentViscosityTwoPhaseMixture.C
-
-functionObjects/plateletLpt/parcel/defineBasicPlateletParcel.C
-functionObjects/plateletLpt/parcel/makeBasicPlateletParcelSubmodels.C
-functionObjects/plateletLpt/plateletLpt.C
-
 vfDependentViscosityFoam.C 
 
 EXE = $(FOAM_APPBIN)/vfDependentViscosityFoam
