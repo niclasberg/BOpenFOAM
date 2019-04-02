@@ -15,7 +15,11 @@
 #include "fvmDdt.H"
 #include "fvmDiv.H"
 
-Foam::PhaseModel::PhaseModel(const Foam::fvMesh & mesh, const Foam::dictionary & dict, const Foam::word & phaseName)
+Foam::PhaseModel::PhaseModel(
+    const Foam::fvMesh & mesh, 
+    const Foam::dictionary & dict, 
+    const Foam::word & phaseName
+)
 :
     name_(phaseName),
     rho0_("rho", dimDensity, dict.subDict(name_)),
@@ -27,7 +31,7 @@ Foam::PhaseModel::PhaseModel(const Foam::fvMesh & mesh, const Foam::dictionary &
             IOobject::groupName("alpha", name_),
             mesh.time().timeName(),
             mesh,
-            IOobject::READ_IF_PRESENT,
+            IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
         mesh,
@@ -57,6 +61,11 @@ Foam::PhaseModel::PhaseModel(const Foam::fvMesh & mesh, const Foam::dictionary &
         dimensionedScalar("0", dimensionSet(0, 3, -1, 0, 0), 0)
     ),
     viscosityModel_(ViscosityModel::New(dict.subDict(name_), *this))
+{
+    readPhi();
+}
+
+void Foam::PhaseModel::readPhi()
 {
     const word phiName = IOobject::groupName("phi", name_);
 
@@ -128,6 +137,56 @@ Foam::PhaseModel::PhaseModel(const Foam::fvMesh & mesh, const Foam::dictionary &
     }
 }
 
+Foam::PhaseModel::PhaseModel(
+    const Foam::fvMesh & mesh, 
+    const Foam::dictionary & dict, 
+    const Foam::word & phaseName, 
+    const Foam::volScalarField & alpha
+)
+:
+    name_(phaseName),
+    rho0_("rho", dimDensity, dict.subDict(name_)),
+    mesh_(mesh),
+    alpha_
+    (
+        IOobject
+        (
+            IOobject::groupName("alpha", name_),
+            mesh.time().timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        alpha
+    ),
+    U_
+    (
+        IOobject
+        (
+            IOobject::groupName("U", name_),
+            mesh.time().timeName(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh
+    ),
+    alphaPhi_
+    (
+        IOobject
+        (
+            IOobject::groupName("alphaPhi", name_),
+            mesh.time().timeName(),
+            mesh
+        ),
+        mesh,
+        dimensionedScalar("0", dimensionSet(0, 3, -1, 0, 0), 0)
+    ),
+    viscosityModel_(ViscosityModel::New(dict.subDict(name_), *this))
+{
+    readPhi();
+}
+
 void Foam::PhaseModel::correctInflowOutflow(surfaceScalarField& alphaPhi) const
 {
     surfaceScalarField::Boundary& alphaPhiBf = alphaPhi.boundaryFieldRef();
@@ -156,7 +215,7 @@ Foam::twoPhaseModel::twoPhaseModel(const fvMesh& mesh)
     ),
     mesh_(mesh),
     phase1_(mesh, *this, wordList(lookup("phases"))[0]),
-    phase2_(mesh, *this, wordList(lookup("phases"))[1]),
+    phase2_(mesh, *this, wordList(lookup("phases"))[1], scalar(1) - phase1_.alpha()),
     d_("d", dimLength, *this),
     phi_
     (

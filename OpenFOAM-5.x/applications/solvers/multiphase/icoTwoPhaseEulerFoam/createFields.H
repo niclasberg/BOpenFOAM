@@ -8,7 +8,6 @@ PhaseModel & phase2 = fluid.phase2();
 // References to phase specific entiies
 volScalarField & alpha1 = phase1.alpha();
 volScalarField & alpha2 = phase2.alpha();
-alpha2 = scalar(1) - alpha1;
 volVectorField & U1 = phase1.U();
 volVectorField & U2 = phase2.U();
 surfaceScalarField & phi1 = phase1.phi();
