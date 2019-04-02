@@ -17,6 +17,7 @@ class PhaseModel
 {
 public:
     PhaseModel(const fvMesh& mesh, const dictionary& dict, const word &);
+    PhaseModel(const fvMesh& mesh, const dictionary& dict, const word &, const volScalarField &);
 
     const word & name() const { return name_; }
     const fvMesh & mesh() const { return mesh_; }
@@ -42,6 +43,8 @@ public:
     void correctInflowOutflow(surfaceScalarField& alphaPhi) const;
 
 private:
+    void readPhi();
+
     word name_;
     dimensionedScalar rho0_;
     const fvMesh & mesh_;
