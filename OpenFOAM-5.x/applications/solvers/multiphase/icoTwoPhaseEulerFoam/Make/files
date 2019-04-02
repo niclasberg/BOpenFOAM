@@ -1,0 +1,6 @@
+twoPhaseModel.C
+viscosityModels.C
+icoTwoPhaseEulerFoam.C
+
+
+EXE = $(FOAM_APPBIN)/icoTwoPhaseEulerFoam
