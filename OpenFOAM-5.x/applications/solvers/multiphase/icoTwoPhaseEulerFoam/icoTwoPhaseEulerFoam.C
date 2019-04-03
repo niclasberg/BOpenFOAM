@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
-            Info << max(alpha1) << endl;
 			// Solve transport equation for phase fraction
 			fluid.solve();
 
@@ -47,7 +46,7 @@ int main(int argc, char *argv[])
                 return 0;*/
             
             // Small number
-            //scalar tol = 1e-3;
+            scalar tol = 1e-3;
 
             // Evaluate viscosities
             Info << "computing viscosities" << endl;
@@ -65,33 +64,28 @@ int main(int argc, char *argv[])
                     IOobject::NO_READ,
                     IOobject::NO_WRITE
                 ),
-                9 * mu2 * alpha1 * (pow(alpha1, 0.43) + exp(2.68*alpha1)) / (2.*pow(fluid.d(), 2))/*,
-                zeroGradientFvPatchScalarField::typeName*/
+                9 * mu2 * alpha1 * (pow(alpha1, 0.43) + exp(2.68*alpha1)) / (2.*pow(fluid.d(), 2)),
+                zeroGradientFvPatchScalarField::typeName
             );
 
-            // Evaluate lift force coefficient
-            /*volSymmTensorField gamma2(symm(fvc::grad(U2)));
-            volSymmTensorField Kl(
-                IOobject(
-                    "Kl",
-                    mesh.time().timeName(),
-                    mesh
-                ),
-                19.38*sqrt(phase2.rho() * mu2) * pow(max(tr(gamma2), dimensionedScalar("smallShear", dimLess/dimTime, tol), -0.25) * gamma2 / (4. * 3.1415927 * pow(fluid.d(), 2)),
-                zeroGradientFvPatchScalarField::typeName
-            );*/
+            // Evaluate lift force
+            volSymmTensorField gamma2(symm(fvc::grad(U2)));
+            volScalarField gammaMag2(Foam::sqrt(2.) * mag(gamma2));
+            Fl = 19.38 * sqrt(phase2.rho() * mu2) * alpha1 * (gamma2 & (U2 - U1)) 
+                                    / (4. * 3.1415927 * fluid.d() * sqrt(max(gammaMag2, dimensionedScalar("smallShear", dimless/dimTime, tol))));
 
             // Remove drag and lift at fixed-flux boundaries
             volScalarField::Boundary & Kdb = Kd.boundaryFieldRef();
-            //volScalarField::Boundary & Klb = Kl.boundaryFieldRef();
+            volVectorField::Boundary & Flb = Fl.boundaryFieldRef();
             forAll(phase1.phi().boundaryField(), patchi)
                 if(isA<fixedValueFvsPatchScalarField>(phase1.phi().boundaryField()[patchi])) {
                     Kdb[patchi] = 0.0;
-                    //Klb[patchi] = 0.0;
+                    Flb[patchi] = vector::zero;
                 }
 
-            //Kd.correctBoundaryConditions();
-            //Kl.correctBoundaryConditions();
+            Kd.correctBoundaryConditions();
+            Fl.correctBoundaryConditions();
+            Fd = Kd * (U2 - U1);
 
             // Construct momentum equation matrices
             Info<< "Constructing momentum equations" << endl;
@@ -162,6 +156,15 @@ int main(int argc, char *argv[])
                 fvc::interpolate(Kd * rAU2) * phi1 / phase2.rho()
             );
 
+            // Fluxes due to lift forces
+            surfaceScalarField phiLift1(
+                fvc::flux(rAU1 * Fl) / phase1.rho()
+            );
+
+            surfaceScalarField phiLift2(
+                -fvc::flux(rAU2 * Fl) / phase2.rho()
+            );
+
             // Remove drag fluxes at the fixed flux boundaries
             /*forAll(p_rgh.boundaryField(), patchi) {
                 if(isA<zeroGradientFvPatchScalarField>(p_rgh.boundaryField()[patchi]))
@@ -171,41 +174,41 @@ int main(int argc, char *argv[])
                 }
             }*/
 
-            // Lift force
-
             // Predict fluxes
             surfaceScalarField phiHbyA1(
-                fvc::flux(HbyA1)  // replace by (fvc::interpolate(HbyA1) & mesh.Sh())?
+                fvc::flux(HbyA1) 
               + rAUf1*fvc::ddtCorr(U1, phi1)
               + phiDrag1
+              + phiLift1
             );
 
             surfaceScalarField phiHbyA2(
                 fvc::flux(HbyA2) 
               + rAUf2*fvc::ddtCorr(U2, phi2)
               + phiDrag2
+              + phiLift2
             );      
 
-            HbyA1 += Kd * rAU1 * U2 / phase1.rho();
-            HbyA2 += Kd * rAU2 * U1 / phase2.rho();
+            // Add lift force and the explicit part of the drag force to the velocity corrections
+            HbyA1 += (Kd * rAU1 * U2 + rAU1 * Fl) / phase1.rho();
+            HbyA2 += (Kd * rAU2 * U1 - rAU2 * Fl) / phase2.rho();
 
             //phi = alphaf1*phiHbyA1 + alphaf2*phiHbyA2;
             surfaceScalarField phiHbyA(alphaf1*phiHbyA1 + alphaf2*phiHbyA2);
-            surfaceScalarField rAUf(alphaf1*rAUf1/phase1.rho() + alphaf2*rAUf2/phase2.rho() );
+            surfaceScalarField rAUf(mag(alphaf1*rAUf1)/phase1.rho() + mag(alphaf2*rAUf2)/phase2.rho() );
 
             // Update the fixedFluxPressure BCs to ensure flux consistency
-            {
-                surfaceScalarField::Boundary phib(phi.boundaryField());
-                phib = 
-                    alphaf1.boundaryField() * (mesh.Sf().boundaryField() & U1.boundaryField())
-                  + alphaf2.boundaryField() * (mesh.Sf().boundaryField() & U2.boundaryField());
-
-                setSnGrad<fixedFluxPressureFvPatchScalarField>
+            setSnGrad<fixedFluxPressureFvPatchScalarField>
+            (
+                p_rgh.boundaryFieldRef(),
                 (
-                    p_rgh.boundaryFieldRef(),
-                    (phiHbyA.boundaryField() - phib) / (mesh.magSf().boundaryField()*rAUf.boundaryField())
-                );
-            }
+                    phiHbyA.boundaryField() - 
+                    (
+                        alphaf1.boundaryField() * (mesh.Sf().boundaryField() & U1.boundaryField())
+                      + alphaf2.boundaryField() * (mesh.Sf().boundaryField() & U2.boundaryField())
+                    )
+                ) / (mesh.magSf().boundaryField()*rAUf.boundaryField())
+            );
 
             while (pimple.correctNonOrthogonal()) {
                 fvScalarMatrix pEqnIncomp(fvc::div(phiHbyA) - fvm::laplacian(rAUf, p_rgh) );
@@ -214,10 +217,11 @@ int main(int argc, char *argv[])
                 solve(pEqnIncomp, mesh.solver(p_rgh.select(pimple.finalInnerIter())));
 
                 if (pimple.finalNonOrthogonalIter()) {
+                    // Pressure correction
                     surfaceScalarField SfGradp("mSfGradp", pEqnIncomp.flux()/rAUf);
 
                     // Correct fluxes
-                    /*phi1 = phiHbyA1 + rAUf1 * SfGradp / phase1.rho();
+                    phi1 = phiHbyA1 + rAUf1 * SfGradp / phase1.rho();
                     phi2 = phiHbyA2 + rAUf2 * SfGradp / phase2.rho();
                     phi = alphaf1*phiHbyA1 + alphaf2*phiHbyA2;
 
@@ -233,7 +237,7 @@ int main(int argc, char *argv[])
                     U1 = HbyA1 + fvc::reconstruct(rAUf1 * SfGradp / phase1.rho());
                     U2 = HbyA2 + fvc::reconstruct(rAUf2 * SfGradp / phase2.rho());
                     U1.correctBoundaryConditions();
-                    U2.correctBoundaryConditions();*/
+                    U2.correctBoundaryConditions();
 
                     // Evaluate mixture velocity
                     U = fluid.U();

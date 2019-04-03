@@ -45,6 +45,33 @@ volVectorField U
     fluid.U()
 );
 
+// Lift and drag force
+volVectorField Fl(
+    IOobject(
+        "Fl",
+        mesh.time().timeName(),
+        mesh, 
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedVector("Fl", dimForce / dimVolume, vector::zero),
+    zeroGradientFvPatchScalarField::typeName
+);
+
+volVectorField Fd(
+    IOobject(
+        "Fd",
+        mesh.time().timeName(),
+        mesh, 
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedVector("Fd", dimForce / dimVolume, vector::zero),
+    zeroGradientFvPatchScalarField::typeName
+);
+
 #include "readGravitationalAcceleration.H"
 
 Info<< "Calculating field g.h\n" << endl;

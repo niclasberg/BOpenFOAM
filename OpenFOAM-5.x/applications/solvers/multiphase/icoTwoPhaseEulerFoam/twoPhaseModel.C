@@ -15,6 +15,7 @@
 #include "fvmDdt.H"
 #include "fvmDiv.H"
 
+// PhaseModel
 Foam::PhaseModel::PhaseModel(
     const Foam::fvMesh & mesh, 
     const Foam::dictionary & dict, 
@@ -34,8 +35,7 @@ Foam::PhaseModel::PhaseModel(
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh,
-        dimensionedScalar("0", dimensionSet(0, 0, 0, 0, 0), 0)
+        mesh
     ),
     U_
     (
@@ -72,8 +72,8 @@ void Foam::PhaseModel::readPhi()
     IOobject phiHeader
     (
         phiName,
-        mesh.time().timeName(),
-        mesh,
+        mesh_.time().timeName(),
+        mesh_,
         IOobject::NO_READ
     );
 
@@ -88,12 +88,12 @@ void Foam::PhaseModel::readPhi()
                 IOobject
                 (
                     phiName,
-                    mesh.time().timeName(),
-                    mesh,
+                    mesh_.time().timeName(),
+                    mesh_,
                     IOobject::MUST_READ,
                     IOobject::AUTO_WRITE
                 ),
-                mesh
+                mesh_
             )
         );
     }
@@ -125,8 +125,8 @@ void Foam::PhaseModel::readPhi()
                 IOobject
                 (
                     phiName,
-                    mesh.time().timeName(),
-                    mesh,
+                    mesh_.time().timeName(),
+                    mesh_,
                     IOobject::NO_READ,
                     IOobject::AUTO_WRITE
                 ),
@@ -155,7 +155,7 @@ Foam::PhaseModel::PhaseModel(
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::AUTO_WRITE
         ),
         alpha
     ),
@@ -200,6 +200,7 @@ void Foam::PhaseModel::correctInflowOutflow(surfaceScalarField& alphaPhi) const
     }
 }
 
+// TwoPhaseModel
 Foam::twoPhaseModel::twoPhaseModel(const fvMesh& mesh)
 :
     IOdictionary
@@ -341,7 +342,7 @@ void Foam::twoPhaseModel::solve()
         }
 
         phase2_.alphaPhi() = phi() - phase1().alphaPhi();
-        //phase2_.correctInflowOutflow(phase2().alphaPhi());
+        phase2_.correctInflowOutflow(phase2().alphaPhi());
 
         Info<< alpha1.name() << " volume fraction = "
             << alpha1.weightedAverage(mesh_.V()).value()
