@@ -38,9 +38,11 @@ nobiliActivation<CloudType>::nobiliActivation(const dictionary & dict)
 template<class CloudType>
 void nobiliActivation<CloudType>::calc(typename CloudType::parcelType & p, scalar dt)  const 
 {	
+    const scalar PaToDyneInvCmSqr = 10;
+
     // Compute stress magnitude
-    scalar tau_mag = this->stressNorm(p.tau());
-    scalar tau_mag_last = this->stressNorm(p.tau_last());
+    scalar tau_mag = PaToDyneInvCmSqr * this->stressNorm(p.tau());
+    scalar tau_mag_last = PaToDyneInvCmSqr * this->stressNorm(p.tau_last());
 
 	// Update mechanical dose
 	scalar stressHistoryLast = p.stressHistory();

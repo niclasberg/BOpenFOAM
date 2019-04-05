@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
                     Flb[patchi] = vector::zero;
                 }
 
-            Kd.correctBoundaryConditions();
-            Fl.correctBoundaryConditions();
+            //Kd.correctBoundaryConditions();
+            //Fl.correctBoundaryConditions();
             Fd = Kd * (U2 - U1);
 
             // Construct momentum equation matrices

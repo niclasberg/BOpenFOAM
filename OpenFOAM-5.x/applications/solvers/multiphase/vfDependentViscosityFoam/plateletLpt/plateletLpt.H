@@ -2,7 +2,7 @@
 #define functionObjects_plateletLpt_H
 
 #include "fvMeshFunctionObject.H"
-#include "cloud/basicPlateletCloud.H"
+#include "basicPlateletCloud.H"
 #include "volFields.H"
 #include "uniformDimensionedFields.H"
 

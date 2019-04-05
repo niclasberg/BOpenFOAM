@@ -31,13 +31,6 @@ int main(int argc, char *argv[])
 			"Number of subcycles for each timestep"
 		);
 
-		Foam::argList::addOption
-		(
-			"repeat",
-			"Integer",
-			"Number of times to repeat the input data (in time)"
-		);
-
 		Foam::timeSelector::addOptions();
 		#include "addRegionOption.H"
 		#include "addFunctionObjectOptions.H"
@@ -60,7 +53,6 @@ int main(int argc, char *argv[])
 
 		// Read number of substeps and number of repeats
 		int substeps = args.optionLookupOrDefault<int>("subCycle", 1);
-		int repeat = args.optionLookupOrDefault<int>("repeat", 1);
 
 		#include "createFields.H"
 
@@ -72,98 +64,90 @@ int main(int argc, char *argv[])
 		);
 
 		if(substeps > 1) {
-			scalar tStart = 0.;
-			int tIndex = 0;
-			for(int rIt = 0; rIt < repeat; ++rIt) {
-				// Create interpolators
-				FieldInterpolator<volVectorField> uInterp(mesh, U.name());
-				FieldInterpolator<volScalarField> p_rghInterp(mesh, p_rgh.name());
-				FieldInterpolator<volScalarField> alphaInterp(mesh, alpha1.name());
-				FieldInterpolator<surfaceScalarField> phiInterp(mesh, phi.name());
+			// Create interpolators
+			FieldInterpolator<volVectorField> uInterp(mesh, U.name());
+			FieldInterpolator<volScalarField> p_rghInterp(mesh, p_rgh.name());
+			FieldInterpolator<volScalarField> alphaInterp(mesh, alpha1.name());
+			FieldInterpolator<surfaceScalarField> phiInterp(mesh, phi.name());
 
-				for(int timei = 0; timei < timeDirs.size(); ++timei) {
-					runTime.setTime(instant(timeDirs[timei].value() + tStart), tIndex);
-					Info<< "Time = " << runTime.timeName() << ", deltaT = " << runTime.deltaTValue() << endl;
+			for(int timei = 0; timei < timeDirs.size(); ++timei) {
+				runTime.setTime(timeDirs[timei], timei);
+				Info<< "Time = " << runTime.timeName() << ", deltaT = " << runTime.deltaTValue() << endl;
 
-					if (mesh.readUpdate() != polyMesh::UNCHANGED) {
-						// Update functionObjects if mesh changes
-						functionsPtr = functionObjectList::New
-						(
-							args,
-							runTime,
-							functionsDict,
-							selectedFields
-						);
-					}
-
-					// Read data
-					uInterp.readTime(timeDirs[timei].name());
-					p_rghInterp.readTime(timeDirs[timei].name());
-					alphaInterp.readTime(timeDirs[timei].name());
-					phiInterp.readTime(timeDirs[timei].name(), fvc::flux(U));
-
-					// Throw exceptions if IO errors occured
-					FatalIOError.throwExceptions();
-
-					if(timei > 0) {
-						scalar t0 = timeDirs[timei-1].value();	// Old time
-						scalar t1 = timeDirs[timei].value();	// New time
-						scalar dataDt = t1 - t0;
-						runTime.setDeltaT(dataDt, false);	// The false flag here prevents the runtime from adjusting the timestep we set
-
-						// Excecute subcycles
-						for(subCycleTime subIter = subCycleTime(runTime, substeps); !(++subIter).end(); ) {
-							scalar timeStepFraction = (runTime.value() - (t0 + tStart)) / dataDt;
-							Info << "Executing subcycle, current time = " << runTime.timeName() << ", deltaT = " 
-								<< runTime.deltaTValue() << ", fraction of timestep  = " << timeStepFraction << endl;
-
-							// Interpolate fields
-							U = uInterp.interpolate(timeStepFraction, dataDt);
-							p_rgh = p_rghInterp.interpolate(timeStepFraction, dataDt);
-							alpha1 = alphaInterp.interpolate(timeStepFraction, dataDt);
-							phi = phiInterp.interpolate(timeStepFraction, dataDt);
-
-							// Correct boundary conditions after interpolation
-							U.correctBoundaryConditions();
-							p_rgh.correctBoundaryConditions();
-							alpha1.correctBoundaryConditions();
-
-							// Evaluate dependent fields
-							alpha2 = 1. - alpha1;
-							rho = alpha1*rho1 + alpha2*rho2;
-							p = p_rgh + rho*gh;
-
-							// Update viscosity
-							twoPhaseProperties.correct();
-
-							try {
-								// Execute function objects
-								if(functionsPtr->status())
-									forAll(functionsPtr(), objectI)
-										functionsPtr()[objectI].execute();
-							} catch (IOerror& err) {
-								Warning<< err << endl;
-							}
-						}
-					}
-
-					try {
-						// Execute the write operation for each function object
-						if(functionsPtr->status())
-							forAll(functionsPtr(), objectI)
-								functionsPtr()[objectI].write();
-
-						// Execute the functionObject 'end()' function for the last time
-						if (timei == timeDirs.size()-1)
-							functionsPtr->end();
-					} catch (IOerror& err) {
-						Warning<< err << endl;
-					}
-
-					tIndex += 1;
+				if (mesh.readUpdate() != polyMesh::UNCHANGED) {
+					// Update functionObjects if mesh changes
+					functionsPtr = functionObjectList::New
+					(
+						args,
+						runTime,
+						functionsDict,
+						selectedFields
+					);
 				}
 
-				tStart += timeDirs.last().value();
+				// Read data
+				uInterp.readTime(timeDirs[timei].name());
+				p_rghInterp.readTime(timeDirs[timei].name());
+				alphaInterp.readTime(timeDirs[timei].name());
+				phiInterp.readTime(timeDirs[timei].name(), fvc::flux(U));
+
+				// Throw exceptions if IO errors occured
+				FatalIOError.throwExceptions();
+
+				if(timei > 0) {
+					scalar t0 = timeDirs[timei-1].value();	// Old time
+					scalar t1 = timeDirs[timei].value();	// New time
+					scalar dataDt = t1 - t0;
+					runTime.setDeltaT(dataDt, false);	// The false flag here prevents the runtime from adjusting the timestep we set
+
+					// Excecute subcycles
+					for(subCycleTime subIter = subCycleTime(runTime, substeps); !(++subIter).end(); ) {
+						scalar timeStepFraction = (runTime.value() - t0) / dataDt;
+						Info << "Executing subcycle, current time = " << runTime.timeName() << ", deltaT = " 
+							<< runTime.deltaTValue() << ", fraction of timestep  = " << timeStepFraction << endl;
+
+						// Interpolate fields
+						U = uInterp.interpolate(timeStepFraction, dataDt);
+						p_rgh = p_rghInterp.interpolate(timeStepFraction, dataDt);
+						alpha1 = alphaInterp.interpolate(timeStepFraction, dataDt);
+						phi = phiInterp.interpolate(timeStepFraction, dataDt);
+
+						// Correct boundary conditions after interpolation
+						U.correctBoundaryConditions();
+						p_rgh.correctBoundaryConditions();
+						alpha1.correctBoundaryConditions();
+
+						// Evaluate dependent fields
+						alpha2 = 1. - alpha1;
+						rho = alpha1*rho1 + alpha2*rho2;
+						p = p_rgh + rho*gh;
+
+						// Update viscosity
+						twoPhaseProperties.correct();
+
+						try {
+							// Execute function objects
+							if(functionsPtr->status())
+								forAll(functionsPtr(), objectI)
+									functionsPtr()[objectI].execute();
+						} catch (IOerror& err) {
+							Warning<< err << endl;
+						}
+					}
+				}
+
+				try {
+					// Execute the write operation for each function object
+					if(functionsPtr->status())
+						forAll(functionsPtr(), objectI)
+							functionsPtr()[objectI].write();
+
+					// Execute the functionObject 'end()' function for the last time
+					if (timei == timeDirs.size()-1)
+						functionsPtr->end();
+				} catch (IOerror& err) {
+					Warning<< err << endl;
+				}
 			}
 		} else {
 			for(int timei = 0; timei < timeDirs.size(); ++timei) {

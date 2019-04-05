@@ -44,7 +44,6 @@ namespace functionObjects
 }
 }
 
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::functionObjects::plateletLpt::plateletLpt

@@ -47,9 +47,11 @@ soaresActivation<CloudType>::soaresActivation(const dictionary & dict)
 template<class CloudType>
 void soaresActivation<CloudType>::calc(typename CloudType::parcelType & p, scalar dt) const 
 {
+    const scalar PaToDyneInvCmSqr = 10;
+
     // Compute stress magnitude
-    scalar tau_mag = this->stressNorm(p.tau());
-    scalar tau_mag_last = this->stressNorm(p.tau_last());
+    scalar tau_mag = PaToDyneInvCmSqr * this->stressNorm(p.tau());
+    scalar tau_mag_last = PaToDyneInvCmSqr * this->stressNorm(p.tau_last());
     scalar dTauDt = abs(tau_mag - tau_mag_last) / dt;
 
     // Limit pas
