@@ -149,6 +149,10 @@ private:
     scalar C_;
     scalar Rp_;
     scalar Rc_;
+
+    // Flag to indicate if the mean should be imposed,
+    // Otherwise, the pressure is set to be constant over the patch
+    bool imposeMean_;
 };
 
 }
