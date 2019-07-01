@@ -1,0 +1,3 @@
+wallShearStressGradient/wallShearStressGradient.C
+
+LIB = $(FOAM_LIBBIN)/libvfDependentFunctionObjects

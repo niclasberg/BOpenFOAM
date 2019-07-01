@@ -152,10 +152,8 @@ public:
         }
 
         //- Return the strain rate
-        tmp<volScalarField> strainRate() const;
-
-        //- Return the Haematocrit (VF = Volume Fraction = alpha1)
-        tmp<volScalarField> VF() const;
+        tmp<volScalarField> strainRate(const volVectorField & U) const;
+        const volScalarField & alpha() const { return alpha1_; }
 
         //- Return the laminar viscosity
 		tmp<volScalarField> mu() const
@@ -163,14 +161,20 @@ public:
 			return mu_;
 		}
 
+        // Derivative of viscosity with respect to volume fraction and shear rate
+        //virtual tmp<volScalarField> dMuDalpha() const = 0;
+        //virtual tmp<volScalarField> dMuDgamma() const = 0;
+
 		//- Return the laminar viscosity for patch
 		tmp<scalarField> mu(const label patchi) const
 		{
 			return mu_.boundaryField()[patchi];
 		}
 
+        virtual tmp<volScalarField> calcMu(const volScalarField & alpha, const volVectorField & U) const = 0;
+
         //- Correct the laminar viscosity
-        virtual void correct() = 0;
+        void correct();
 
         //- Read transportProperties dictionary
         virtual bool read(const dictionary& viscosityProperties) = 0;

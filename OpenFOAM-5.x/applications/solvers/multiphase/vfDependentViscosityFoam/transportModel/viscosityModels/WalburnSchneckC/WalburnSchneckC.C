@@ -47,13 +47,13 @@ namespace viscosityModels
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 
-void Foam::viscosityModels::WalburnSchneckC::correct()
+Foam::tmp<Foam::volScalarField> Foam::viscosityModels::WalburnSchneckC::calcMu(const volScalarField & alpha, const volVectorField & U) const
 {
 	volScalarField alpha1LimitedPercent(
-			scalar(100.0)*min(max(VF(), scalar(0.25)), scalar(1))
+			scalar(100.0)*min(max(alpha, scalar(0.25)), scalar(1))
 	);
 
-    this->mu_ = max(
+    return max(
 		muMin_,
 		min(
 			muMax_,
@@ -62,7 +62,7 @@ void Foam::viscosityModels::WalburnSchneckC::correct()
 			*pow(
 				max
 				(
-					dimensionedScalar("one", dimTime, 1.0)*strainRate(),
+					dimensionedScalar("one", dimTime, 1.0)*strainRate(U),
 					dimensionedScalar("VSMALL", dimless, VSMALL)
 				),
 				(-scalar(0.00499) * alpha1LimitedPercent)

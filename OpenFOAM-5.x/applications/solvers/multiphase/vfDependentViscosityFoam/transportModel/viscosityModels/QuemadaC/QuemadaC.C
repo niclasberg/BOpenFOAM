@@ -65,20 +65,88 @@ Foam::viscosityModels::QuemadaC::QuemadaC
 	correct();
 }
 
+// Helper functions
+namespace Foam {
+/*void quemadaCoefficients(
+    const volScalarField & alpha, 
+    volScalarField & k0, 
+    volScalarField & kinf, 
+    volScalarField & gammaC
+)
+{
+    k0 = exp(3.874 - 10.41*alpha + 13.8*pow(alpha, 2) - 6.738*pow(alpha,3));
+	kinf = exp(1.3435 - 2.803*alpha + 2.711*pow(alpha, 2) - 0.6479*pow(alpha, 3));
+    gammaC = dimensionedScalar("oneOverTime", dimless/dimTime, 1.0) * exp(-6.1508 + 27.923*alpha - 25.6 * pow(alpha, 2) + 3.697 * pow(alpha, 3));
+}*/
+
+/*void quemadaCoefficientsAndDerivs(
+    const volScalarField & alpha, 
+    volScalarField & k0,
+    volScalarField & dk0_dalpha,
+    volScalarField & kinf,
+    volScalarField & dkinf_dalpha,
+    volScalarField & gammaC,
+    volScalarField & dgammaC_dalpha
+)
+{
+    quemadaCoefficients(alpha, k0, kinf, gammaC);
+    dk0_dalpha = k0 * (-10.41 + 2*13.8*alpha - 3*6.738*pow(alpha, 2));
+    dkinf_dalpha = kinf * (-2.803 + 2*2.711*alpha - 3*0.6479*pow(alpha, 2));
+    dgammaC_dalpha = gammaC * (27.923 - 2*25.6 * alpha + 3*3.697 * pow(alpha, 2));
+}*/
+
+}
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::viscosityModels::QuemadaC::correct()
+Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::calcMu(const volScalarField & alpha, const volVectorField & U) const
 {
-	const volScalarField limitedVF( min(max(VF(), scalar(0)), scalar(1)) );
-	const volScalarField k0 = exp(3.874 - 10.41*limitedVF + 13.8*pow(limitedVF, 2) - 6.738*pow(limitedVF,3));
-	const volScalarField kinf = exp(1.3435 - 2.803*limitedVF + 2.711*pow(limitedVF, 2) - 0.6479*pow(limitedVF, 3));
-	const volScalarField sqrtGammaOverGammaC =
-			sqrt(max(dimensionedScalar("one", dimTime, 1.0)*strainRate(), dimensionedScalar("VSMALL", dimless, VSMALL))
-			/ exp(-6.1508 + 27.923*limitedVF - 25.6 * pow(limitedVF, 2) + 3.697 * pow(limitedVF, 3)));
-
-    this->mu_ = min(muMax_, mup_ * pow(1.0 - 0.5 * limitedVF * (k0 + kinf*sqrtGammaOverGammaC) / (1.0 + sqrtGammaOverGammaC), -2.0));
+	const volScalarField limitedVF( min(max(alpha, scalar(0)), scalar(1)) );
+    volScalarField k0 = exp(3.874 - 10.41*alpha + 13.8*pow(alpha, 2) - 6.738*pow(alpha,3));
+	volScalarField kinf = exp(1.3435 - 2.803*alpha + 2.711*pow(alpha, 2) - 0.6479*pow(alpha, 3));
+    volScalarField gammaC = dimensionedScalar("oneOverTime", dimless/dimTime, 1.0) * exp(-6.1508 + 27.923*alpha - 25.6 * pow(alpha, 2) + 3.697 * pow(alpha, 3));
+	
+    //quemadaCoefficients(limitedVF, k0, kinf, gammaC);
+    return min(muMax_, mup_ * pow(1.0 - 0.5 * limitedVF * (k0 + kinf*sqrt(strainRate(U) / gammaC)) / (1.0 + sqrt(strainRate(U) / gammaC)), -2.0));
 }
+
+/*virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDalpha() const
+{
+    const volScalarField alpha( min(max(VF(), scalar(0)), scalar(1)) );
+    volScalarField k0, kinf, gammaC, dk0_dalpha, dkinf_dalpha, dgammaC_dalpha;
+    quemadaCoefficientsAndDerivs(alpha, k0, dk0_dalpha, kinf, dkinf_dalpha, gammaC, dgammaC_dalpha);
+
+    const volScalarField gamma = shearRate();
+    const volScalarField num = k0 + kinf*sqrt(gamma / gammaC);
+    const volScalarField denum = 1 + sqrt(gamma/gammaC);
+
+    return tmp<volScalarField>(
+        new volScalarField(
+            mup_ * pow(1. - 0.5*alpha*num/denum, -3) * (
+                num/denum * (1 + alpha*sqrt(gamma) * dgammaC_dalpha / (2*denum*pow(gammaC, 1.5))) +
+                alpha/denum * (dk0_dalpha + dkinf_dalpha*sqrt(gamma/gammaC) - 0.5*kinf*sqrt(gamma)*dgammaC_dalpha / pow(gammaC, 1.5))
+            )
+        )
+    );
+}
+
+virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDgamma() const
+{
+    const volScalarField alpha( min(max(VF(), scalar(0)), scalar(1)) );
+    volScalarField k0, kinf, gammaC;
+    quemadaCoefficients(alpha, k0, kinf, gammaC);
+
+    const volScalarField gamma = shearRate();
+    const volScalarField num = k0 + kinf*sqrt(gamma / gammaC);
+    const volScalarField denum = 1 + sqrt(gamma/gammaC);
+
+    return tmp<volScalarField>(
+        new volScalarField(
+            mup_ pow(1. - 0.5*alpha*num/denum, -3) * 
+                alpha * (kinf - num/denum) / 2*denum * sqrt(gamma*gammaC)
+        )
+    );
+}*/
 
 bool Foam::viscosityModels::QuemadaC::read
 (

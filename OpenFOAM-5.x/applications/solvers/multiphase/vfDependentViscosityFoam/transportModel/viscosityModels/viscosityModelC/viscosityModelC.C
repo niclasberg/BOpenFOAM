@@ -71,14 +71,14 @@ Foam::viscosityModelC::viscosityModelC
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::viscosityModelC::strainRate() const
+Foam::tmp<Foam::volScalarField> Foam::viscosityModelC::strainRate(const volVectorField & U) const
 {
-    return sqrt(2.0)*mag(symm(fvc::grad(U_)));
+    return sqrt(2.0)*mag(symm(fvc::grad(U)));
 }
 
-Foam::tmp<Foam::volScalarField> Foam::viscosityModelC::VF() const
+void Foam::viscosityModelC::correct()
 {
-    return alpha1_;
+    this->mu_ = this->calcMu(alpha1_, U_);
 }
 
 bool Foam::viscosityModelC::read(const dictionary& viscosityProperties)

@@ -91,7 +91,7 @@ public:
     // Member Functions
 
         //- Correct the laminar viscosity
-        void correct();
+        virtual tmp<volScalarField> calcMu(const volScalarField & alpha, const volVectorField & U) const;
 
         //- Read transportProperties dictionary
         bool read(const dictionary& viscosityProperties);

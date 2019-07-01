@@ -58,6 +58,45 @@ Foam::viscosityModels::NewtonianC::NewtonianC
 	this->mu_ = mu0_;
 }
 
+Foam::tmp<Foam::volScalarField> Foam::viscosityModels::NewtonianC::calcMu(const volScalarField & alpha, const volVectorField & U) const
+{
+    return tmp<volScalarField>(
+        new volScalarField(
+            IOobject
+			(
+				"muNewtonian",
+				U_.mesh().time().timeName(),
+				U_.mesh(),
+				IOobject::NO_READ,
+				IOobject::NO_WRITE
+			),
+            U.mesh(),
+            mu0_
+        )
+    );
+}
+
+/*virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDalpha() const
+{
+    return tmp<Foam::volScalarField>(
+        new volScalarField(
+            "dMuDalpha",
+            U_.mesh(),
+            dimensionedScalar("zero", dimDynamicViscosity * dimVolume, 0)
+        )
+    );
+}
+
+virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDgamma() const
+{
+    return tmp<Foam::volScalarField>(
+        new volScalarField(
+            "dMuDgamma",
+            U_.mesh(),
+            dimensionedScalar("zero", dimDynamicViscosity * dimTime, 0)
+        )
+    );
+}*/
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 

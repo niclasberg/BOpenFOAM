@@ -46,18 +46,18 @@ namespace viscosityModels
 
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
-void Foam::viscosityModels::CassonC::correct()
+Foam::tmp<Foam::volScalarField> Foam::viscosityModels::CassonC::calcMu(const volScalarField & alpha, const volVectorField & U) const
 {
-    const volScalarField limitedAlpha1(min(max(this->VF(), scalar(0)), scalar(1)));
+    const volScalarField limitedAlpha1(min(max(alpha, scalar(0)), scalar(1)));
     const volScalarField kC( mup_ / pow(1.0 - limitedAlpha1 , A_ ));
     const volScalarField tauY((B_ / A_) * ( pow(1 - limitedAlpha1, 0.5*A_) - 1.));
 
-    this->mu_ = min(
+    return min(
     				muMax_,
 					sqr(
-						sqrt(kC * strainRate()) + sqrt(tauY)
+						sqrt(kC * strainRate(U)) + sqrt(tauY)
 					) / max(
-						strainRate(),
+						strainRate(U),
 						dimensionedScalar("VSMALL", dimless/dimTime, VSMALL)
 					)
 				);
