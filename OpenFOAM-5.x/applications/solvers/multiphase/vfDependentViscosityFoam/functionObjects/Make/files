@@ -1,3 +1,4 @@
 wallShearStressGradient/wallShearStressGradient.C
+vorticitySources/vorticitySources.C
 
 LIB = $(FOAM_LIBBIN)/libvfDependentFunctionObjects

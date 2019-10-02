@@ -1,5 +1,4 @@
 parcel/defineBasicPlateletParcel.C
 parcel/makeBasicPlateletParcelSubmodels.C
-plateletLpt.C
 
 LIB = $(FOAM_LIBBIN)/libplateletLpt

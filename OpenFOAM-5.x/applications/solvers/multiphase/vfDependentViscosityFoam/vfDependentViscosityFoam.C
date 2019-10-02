@@ -72,7 +72,8 @@ int main(int argc, char *argv[])
 
 			for(int timei = 0; timei < timeDirs.size(); ++timei) {
 				runTime.setTime(timeDirs[timei], timei);
-				Info<< "Time = " << runTime.timeName() << ", deltaT = " << runTime.deltaTValue() << endl;
+				scalar deltaTvalue = runTime.deltaTValue();
+				//Info<< "Time = " << runTime.timeName() << ", deltaT = " << runTime.deltaTValue() << endl;
 
 				if (mesh.readUpdate() != polyMesh::UNCHANGED) {
 					// Update functionObjects if mesh changes
@@ -136,6 +137,9 @@ int main(int argc, char *argv[])
 					}
 				}
 
+				// Reset the deltaT value for the runtime for i/o
+				runTime.setDeltaT(deltaTvalue, false);
+
 				try {
 					// Execute the write operation for each function object
 					if(functionsPtr->status())
@@ -152,6 +156,8 @@ int main(int argc, char *argv[])
 		} else {
 			for(int timei = 0; timei < timeDirs.size(); ++timei) {
 				runTime.setTime(timeDirs[timei], timei);
+				scalar deltaTvalue = runTime.deltaTValue();
+
 				if(timei == 0)
 					runTime.setDeltaT(timeDirs[timei+1].value()-timeDirs[timei].value(), false);
 				else
@@ -178,7 +184,7 @@ int main(int argc, char *argv[])
 						U = volVectorField(IOobject(U.name(), runTime.timeName(), mesh, IOobject::MUST_READ, IOobject::NO_WRITE), mesh);
 						p_rgh = volScalarField(IOobject(p_rgh.name(), runTime.timeName(), mesh, IOobject::MUST_READ, IOobject::NO_WRITE), mesh);
 						alpha1 = volScalarField(IOobject(alpha1.name(), runTime.timeName(), mesh, IOobject::MUST_READ, IOobject::NO_WRITE), mesh);
-						phi = surfaceScalarField(IOobject(phi.name(), runTime.timeName(), mesh, IOobject::MUST_READ, IOobject::NO_WRITE), fvc::flux(U));
+						phi = surfaceScalarField(IOobject(phi.name(), runTime.timeName(), mesh, IOobject::READ_IF_PRESENT, IOobject::NO_WRITE), fvc::flux(U));
 
 						// Evaluate dependent fields
 						alpha2 = 1. - alpha1;
@@ -190,7 +196,17 @@ int main(int argc, char *argv[])
 					}
 
 					// Execute function objects
-					functionsPtr->execute();
+					if(functionsPtr->status())
+						forAll(functionsPtr(), objectI)
+							functionsPtr()[objectI].execute();
+
+					// Reset the deltaT value for the runtime for i/o
+					runTime.setDeltaT(deltaTvalue, false);
+
+					// Write data
+					if(functionsPtr->status())
+						forAll(functionsPtr(), objectI)
+							functionsPtr()[objectI].write();
 
 					if (timei == timeDirs.size()-1)
 						functionsPtr->end();
