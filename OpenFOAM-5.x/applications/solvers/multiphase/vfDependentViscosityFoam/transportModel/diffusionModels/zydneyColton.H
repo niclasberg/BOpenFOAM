@@ -18,7 +18,7 @@ class zydneyColton : public isotropicDiffusion
 public:
     TypeName("zydneyColton");
 
-    zydneyColton(const dictionary&, const volVectorField&, const surfaceScalarField&);
+    zydneyColton(const dictionary&, const volVectorField&, const surfaceScalarField&, const viscosityModelC & viscosityModel);
     virtual ~zydneyColton() {}
 
 	virtual tmp<volScalarField> D(const volScalarField & alpha) const;

@@ -16,7 +16,7 @@ protected:
 public:
     TypeName("isotropicDiffusion");
 
-    isotropicDiffusion(const volVectorField&, const surfaceScalarField&);
+    isotropicDiffusion(const volVectorField&, const surfaceScalarField&, const viscosityModelC & viscosityModel);
     virtual ~isotropicDiffusion() {}
 
     //- Correct the diffusion model

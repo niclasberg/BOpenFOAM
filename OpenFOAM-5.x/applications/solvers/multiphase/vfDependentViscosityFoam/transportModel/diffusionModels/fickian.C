@@ -19,10 +19,11 @@ Foam::fickian::fickian
 (
     const dictionary& diffusionProperties,
     const volVectorField& U,
-    const surfaceScalarField& phi)
+    const surfaceScalarField& phi, 
+	const viscosityModelC & viscosityModel)
 : 
-isotropicDiffusion(U, phi),
-Dab_(diffusionProperties.lookup("Dab"))
+	isotropicDiffusion(U, phi, viscosityModel),
+	Dab_(diffusionProperties.lookup("Dab"))
 {
 
 }

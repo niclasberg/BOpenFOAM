@@ -17,13 +17,14 @@ Foam::zydneyColton::zydneyColton
 (
     const dictionary& diffusionProperties,
     const volVectorField& U,
-    const surfaceScalarField& phi)
+    const surfaceScalarField& phi,
+    const viscosityModelC & viscosityModel)
 : 
-isotropicDiffusion(U, phi),
-D0_(diffusionProperties.lookup("D0")),
-a_(diffusionProperties.lookup("a")),
-k_(diffusionProperties.lookup("k")),
-n_(diffusionProperties.lookup("n"))
+    isotropicDiffusion(U, phi, viscosityModel),
+    D0_(diffusionProperties.lookup("D0")),
+    a_(diffusionProperties.lookup("a")),
+    k_(diffusionProperties.lookup("k")),
+    n_(diffusionProperties.lookup("n"))
 {
 
 }

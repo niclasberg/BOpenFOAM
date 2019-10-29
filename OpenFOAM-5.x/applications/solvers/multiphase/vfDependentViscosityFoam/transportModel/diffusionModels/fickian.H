@@ -16,7 +16,7 @@ protected:
 public:
     TypeName("fickian");
 
-    fickian(const dictionary&, const volVectorField&, const surfaceScalarField&);
+    fickian(const dictionary&, const volVectorField&, const surfaceScalarField&, const viscosityModelC & viscosityModel);
     virtual ~fickian() {}
 
 	virtual tmp<volScalarField> D(const volScalarField &) const;

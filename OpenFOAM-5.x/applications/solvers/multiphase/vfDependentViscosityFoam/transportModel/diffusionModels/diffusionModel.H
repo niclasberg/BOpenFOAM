@@ -7,6 +7,7 @@
 #include "dimensionedScalar.H"
 #include "fvMatricesFwd.H"
 #include "runTimeSelectionTables.H"
+#include "viscosityModelC.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -22,6 +23,7 @@ protected:
 
         const volVectorField& U_;
         const surfaceScalarField& phi_;
+        const viscosityModelC & viscosityModel_;
 
         //volScalarField mu_;
 
@@ -50,9 +52,10 @@ public:
             (
                 const dictionary& diffusionProperties,
                 const volVectorField& U,
-                const surfaceScalarField& phi
+                const surfaceScalarField& phi,
+                const viscosityModelC & viscosityModel
             ),
-            (diffusionProperties, U, phi)
+            (diffusionProperties, U, phi, viscosityModel)
         );
 
 
@@ -62,7 +65,8 @@ public:
         (
             const dictionary& diffusionProperties,
             const volVectorField& U,
-            const surfaceScalarField& phi
+            const surfaceScalarField& phi,
+            const viscosityModelC & viscosityModel
         );
 
 
@@ -73,7 +77,8 @@ public:
         (
             //const dictionary& viscosityProperties,
             const volVectorField& U,
-            const surfaceScalarField& phi
+            const surfaceScalarField& phi,
+            const viscosityModelC & viscosityModel
         );
 
 
@@ -83,6 +88,10 @@ public:
 
 
     // Member Functions
+
+        //- Implementation functions for no flux boundary condition
+        //virtual scalarField noFluxGradientValue() = 0;
+        //virtual scalarField noFluxGradientValue() = 0;
 
         //- Correct the diffusion model
         virtual void correct() = 0;
@@ -95,6 +104,8 @@ public:
 
         //- Return the strain rate
         tmp<volScalarField> shearRate() const;
+
+        const viscosityModelC & viscosityModel() const;
 };
 
 } // End namespace Foam

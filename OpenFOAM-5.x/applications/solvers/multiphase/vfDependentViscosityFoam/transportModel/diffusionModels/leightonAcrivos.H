@@ -12,15 +12,15 @@ class leightonAcrivos : public diffusionModel
 {
 
 protected:
-	dimensionedScalar a_;
-	dimensionedScalar Kgamma_;
-	dimensionedScalar Kalpha_;
+	dimensionedScalar Db_;			// Brownian diffusion
+	dimensionedScalar a_;			// Particle radius
+	dimensionedScalar Kc_;		// 
 	dimensionedScalar Kmu_;
-	const volScalarField & mu_;
+	
 public:
     TypeName("leightonAcrivos");
 
-    leightonAcrivos(const dictionary&, const volVectorField&, const surfaceScalarField&);
+    leightonAcrivos(const dictionary&, const volVectorField&, const surfaceScalarField&, const viscosityModelC &);
     virtual ~leightonAcrivos() {}
 
     //- Correct the diffusion model

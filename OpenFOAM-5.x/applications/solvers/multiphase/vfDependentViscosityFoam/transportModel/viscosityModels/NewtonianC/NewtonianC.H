@@ -36,7 +36,7 @@ SourceFiles
 #ifndef NewtonianC_H
 #define NewtonianC_H
 
-#include "../viscosityModelC/viscosityModelC.H"
+#include "viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
 
@@ -87,7 +87,7 @@ public:
 
     // Member Functions
 
-        //virtual tmp<volScalarField> dMuDalpha() const;
+        virtual tmp<volScalarField> dMuDalpha() const;
         //virtual tmp<volScalarField> dMuDgamma() const;
 
         //- Correct the laminar viscosity (not appropriate, viscosity constant)

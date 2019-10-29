@@ -36,7 +36,7 @@ SourceFiles
 #ifndef QuemadaC_H
 #define QuemadaC_H
 
-#include "../viscosityModelC/viscosityModelC.H"
+#include "viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
 
@@ -77,7 +77,7 @@ public:
             const dictionary& viscosityProperties,
             const volVectorField& U,
             const surfaceScalarField& phi,
-	    const volScalarField& alpha1
+	        const volScalarField& alpha1
         );
 
 
@@ -91,7 +91,7 @@ public:
         //- Correct the laminar viscosity
         virtual tmp<volScalarField> calcMu(const volScalarField & alpha, const volVectorField & U) const;
 
-        //virtual tmp<volScalarField> dMuDalpha() const;
+        virtual tmp<volScalarField> dMuDalpha() const;
         //virtual tmp<volScalarField> dMuDgamma() const;
 
         //- Read transportProperties dictionary

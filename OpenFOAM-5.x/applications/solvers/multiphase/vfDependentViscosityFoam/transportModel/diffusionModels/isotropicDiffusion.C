@@ -13,9 +13,10 @@ namespace Foam
 Foam::isotropicDiffusion::isotropicDiffusion
 (
     const volVectorField& U,
-    const surfaceScalarField& phi
+    const surfaceScalarField& phi,
+    const viscosityModelC & viscosityModel
 )
-:  diffusionModel(U, phi)
+:  diffusionModel(U, phi, viscosityModel)
 {
 
 }

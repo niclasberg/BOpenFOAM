@@ -92,7 +92,8 @@ Foam::vfDependentViscosityTwoPhaseMixture::vfDependentViscosityTwoPhaseMixture
 		(
 			*this,
 			U, 
-			phi
+			phi,
+            muModel_
 		)
 	),
 

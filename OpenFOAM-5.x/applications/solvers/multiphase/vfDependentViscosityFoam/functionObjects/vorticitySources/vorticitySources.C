@@ -77,6 +77,23 @@ Foam::functionObjects::vorticitySources::vorticitySources
         );
     }
 
+    typeNames.append(strainRateName);
+    mesh_.objectRegistry::store(
+        new volScalarField
+        (
+            IOobject
+            (
+                strainRateName,
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedScalar("0", dimless/dimTime, Zero)
+        )
+    );
+
     read(dict);
     resetLocalObjectNames(typeNames);
 }
@@ -110,6 +127,9 @@ bool Foam::functionObjects::vorticitySources::execute()
     vorticity = fvc::curl(U); 
     vorticity.oldTime() = fvc::curl(U.oldTime());
     ddtVorticity = fvc::ddt(vorticity);
+
+    // Compute strain rate
+    mesh_.lookupObjectRef<volScalarField>(strainRateName) = sqrt(2.0)*mag(symm(fvc::grad(U)));
 
     // Evaluate the terms in the vorticity equation
     mesh_.lookupObjectRef<volVectorField>(convectiveTermName) = U & fvc::grad(vorticity);

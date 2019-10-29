@@ -27,6 +27,7 @@ License
 #include "NewtonianC.H"
 #include "addToRunTimeSelectionTable.H"
 #include "surfaceFields.H"
+#include "volFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -76,18 +77,25 @@ Foam::tmp<Foam::volScalarField> Foam::viscosityModels::NewtonianC::calcMu(const 
     );
 }
 
-/*virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDalpha() const
+Foam::tmp<Foam::volScalarField> Foam::viscosityModels::NewtonianC::dMuDalpha() const
 {
     return tmp<Foam::volScalarField>(
         new volScalarField(
-            "dMuDalpha",
+            IOobject
+			(
+				"dMuDalpha",
+				U_.mesh().time().timeName(),
+				U_.mesh(),
+				IOobject::NO_READ,
+				IOobject::NO_WRITE
+			),
             U_.mesh(),
             dimensionedScalar("zero", dimDynamicViscosity * dimVolume, 0)
         )
     );
 }
 
-virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDgamma() const
+/*virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDgamma() const
 {
     return tmp<Foam::volScalarField>(
         new volScalarField(

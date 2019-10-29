@@ -19,8 +19,9 @@ class vorticitySources
 public:
     static const constexpr char * vorticityArrayName = "vorticity";
     static const constexpr char * ddtVorticityArrayName = "ddt(vorticity)";
-    static const constexpr char * convectiveTermName = "(U.nabla)vorticity";
-    static const constexpr char * vortexStretchingTermName = "(vorticity.nabla)U";
+    static const constexpr char * convectiveTermName = "dot(U,nabla)vorticity";
+    static const constexpr char * vortexStretchingTermName = "dot(vorticity,nabla)U";
+    static const constexpr char * strainRateName = "strainRate";
     static const constexpr char * divTermName = "div(U)vorticity";
     static const constexpr char * baroclinicTermName = "cross(nabla_rho,nabla_p)_rhoSqr";
     static const constexpr char * diffusiveFluxTermName = "curl(div(tau)_rho)";

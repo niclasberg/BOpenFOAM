@@ -16,11 +16,13 @@ namespace Foam
 Foam::diffusionModel::diffusionModel
 (
     const volVectorField& U,
-    const surfaceScalarField& phi
+    const surfaceScalarField& phi,
+    const viscosityModelC & viscosityModel
 ) 
 :
     U_(U),
-    phi_(phi)
+    phi_(phi),
+    viscosityModel_(viscosityModel)
 {}
 
 
@@ -29,6 +31,11 @@ Foam::diffusionModel::diffusionModel
 Foam::tmp<Foam::volScalarField> Foam::diffusionModel::shearRate() const
 {
     return sqrt(2.0)*mag(symm(fvc::grad(U_)));
+}
+
+const Foam::viscosityModelC & Foam::diffusionModel::viscosityModel() const
+{
+    return viscosityModel_;
 }
 
 /*bool Foam::diffusionModel::read(const dictionary& diffusionProperties)
@@ -42,7 +49,8 @@ Foam::autoPtr<Foam::diffusionModel> Foam::diffusionModel::New
 (
     const dictionary& dict,
     const volVectorField& U,
-    const surfaceScalarField& phi
+    const surfaceScalarField& phi,
+    const viscosityModelC & viscosityModel
 )
 {
     const word modelType(dict.lookup("diffusionModel"));
@@ -64,7 +72,7 @@ Foam::autoPtr<Foam::diffusionModel> Foam::diffusionModel::New
             << exit(FatalError);
     }
 
-    return autoPtr<diffusionModel>(cstrIter()(subDict, U, phi));
+    return autoPtr<diffusionModel>(cstrIter()(subDict, U, phi, viscosityModel));
 }
 
 
