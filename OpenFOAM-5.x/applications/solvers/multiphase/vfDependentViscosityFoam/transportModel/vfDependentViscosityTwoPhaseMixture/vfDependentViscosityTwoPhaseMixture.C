@@ -118,7 +118,7 @@ Foam::vfDependentViscosityTwoPhaseMixture::vfDependentViscosityTwoPhaseMixture
         calculatedFvPatchScalarField::typeName
     )
 {
-    calcNu();
+    correct();
 }
 
 

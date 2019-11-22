@@ -95,6 +95,24 @@ Foam::tmp<Foam::volScalarField> Foam::viscosityModels::NewtonianC::dMuDalpha() c
     );
 }
 
+Foam::tmp<Foam::volScalarField> Foam::viscosityModels::NewtonianC::dMuDgamma() const
+{
+    return tmp<Foam::volScalarField>(
+        new volScalarField(
+            IOobject
+			(
+				"dMuDgamma",
+				U_.mesh().time().timeName(),
+				U_.mesh(),
+				IOobject::NO_READ,
+				IOobject::NO_WRITE
+			),
+            U_.mesh(),
+            dimensionedScalar("zero", dimDynamicViscosity * dimVolume, 0)
+        )
+    );
+}
+
 /*virtual Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::dMuDgamma() const
 {
     return tmp<Foam::volScalarField>(

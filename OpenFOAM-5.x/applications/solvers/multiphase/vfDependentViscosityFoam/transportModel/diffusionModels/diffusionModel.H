@@ -25,8 +25,6 @@ protected:
         const surfaceScalarField& phi_;
         const viscosityModelC & viscosityModel_;
 
-        //volScalarField mu_;
-
     // Private Member Functions
 
         //- Disallow copy construct
@@ -90,11 +88,10 @@ public:
     // Member Functions
 
         //- Implementation functions for no flux boundary condition
-        //virtual scalarField noFluxGradientValue() = 0;
-        //virtual scalarField noFluxGradientValue() = 0;
+        virtual scalarField noFluxBoundaryWeights(const fvPatch & patch) const = 0;
 
         //- Correct the diffusion model
-        virtual void correct() = 0;
+        virtual void correct(const Foam::volScalarField & alpha) = 0;
 
 		//- Get the flux
 		virtual tmp<volVectorField> flux(const volScalarField &) const = 0;

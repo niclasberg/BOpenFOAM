@@ -87,8 +87,8 @@ public:
 
     // Member Functions
 
-        virtual tmp<volScalarField> dMuDalpha() const;
-        //virtual tmp<volScalarField> dMuDgamma() const;
+        tmp<volScalarField> dMuDalpha() const override;
+        tmp<volScalarField> dMuDgamma() const override;
 
         //- Correct the laminar viscosity (not appropriate, viscosity constant)
         virtual tmp<volScalarField> calcMu(const volScalarField & alpha, const volVectorField & U) const;

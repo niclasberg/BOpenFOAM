@@ -1,9 +1,9 @@
 viscosityModels/viscosityModelC/viscosityModelC.C
 viscosityModels/viscosityModelC/viscosityModelCNew.C
-//viscosityModels/CassonC/CassonC.C
+viscosityModels/CassonC/CassonC.C
 viscosityModels/NewtonianC/NewtonianC.C
 viscosityModels/QuemadaC/QuemadaC.C
-//viscosityModels/WalburnSchneckC/WalburnSchneckC.C
+viscosityModels/WalburnSchneckC/WalburnSchneckC.C
 vfDependentViscosityTwoPhaseMixture/vfDependentViscosityTwoPhaseMixture.C
 
 diffusionModels/diffusionModel.C
@@ -11,5 +11,6 @@ diffusionModels/isotropicDiffusion.C
 diffusionModels/fickian.C
 diffusionModels/zydneyColton.C
 diffusionModels/leightonAcrivos.C
+diffusionModels/noFluxFvPatchField.C
 
 LIB = $(FOAM_LIBBIN)/libvfDependentTransportModel

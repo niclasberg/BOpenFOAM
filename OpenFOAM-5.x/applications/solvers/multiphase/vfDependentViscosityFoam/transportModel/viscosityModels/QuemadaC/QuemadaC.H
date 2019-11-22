@@ -91,8 +91,8 @@ public:
         //- Correct the laminar viscosity
         virtual tmp<volScalarField> calcMu(const volScalarField & alpha, const volVectorField & U) const;
 
-        virtual tmp<volScalarField> dMuDalpha() const;
-        //virtual tmp<volScalarField> dMuDgamma() const;
+        tmp<volScalarField> dMuDalpha() const override;
+        tmp<volScalarField> dMuDgamma() const override;
 
         //- Read transportProperties dictionary
         bool read(const dictionary& viscosityProperties);

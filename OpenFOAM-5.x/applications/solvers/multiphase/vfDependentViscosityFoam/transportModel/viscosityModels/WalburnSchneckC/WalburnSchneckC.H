@@ -39,6 +39,7 @@ SourceFiles
 #include "../viscosityModelC/viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
+#include "error.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -95,6 +96,16 @@ public:
 
         //- Read transportProperties dictionary
         bool read(const dictionary& viscosityProperties);
+
+        tmp<volScalarField> dMuDalpha() const override
+        {
+            notImplemented("WalburnSchneckC::dMuDalpha()");
+        }
+
+        tmp<volScalarField> dMuDgamma() const override
+        {
+            notImplemented("WalburnSchneckC::dMuDgamma()");
+        }
 };
 
 

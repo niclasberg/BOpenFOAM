@@ -23,7 +23,7 @@ Foam::fickian::fickian
 	const viscosityModelC & viscosityModel)
 : 
 	isotropicDiffusion(U, phi, viscosityModel),
-	Dab_(diffusionProperties.lookup("Dab"))
+	Dab_("Dab", dimLength*dimLength/dimTime, diffusionProperties)
 {
 
 }

@@ -120,6 +120,7 @@ public:
         virtual void correct()
         {
             calcNu();
+            diffusionModel_->correct(alpha1_);
         }
 
         //- Read base transportProperties dictionary

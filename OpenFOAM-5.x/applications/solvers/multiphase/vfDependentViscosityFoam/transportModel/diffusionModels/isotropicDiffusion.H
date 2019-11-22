@@ -10,9 +10,9 @@ namespace Foam
 
 class isotropicDiffusion : public diffusionModel 
 {
-
 protected:
 	dimensionedScalar D_;
+	
 public:
     TypeName("isotropicDiffusion");
 
@@ -20,7 +20,7 @@ public:
     virtual ~isotropicDiffusion() {}
 
     //- Correct the diffusion model
-    virtual void correct() { }
+    virtual void correct(const Foam::volScalarField & alpha) { }
 
 	virtual tmp<volScalarField> D(const volScalarField &) const = 0;
 
@@ -29,6 +29,8 @@ public:
 
 	//- Divergence of flux
 	virtual tmp<fvScalarMatrix> divFlux(const volScalarField &) const;
+
+	scalarField noFluxBoundaryWeights(const fvPatch & patch) const override;
 };
 
 } // End namespace Foam

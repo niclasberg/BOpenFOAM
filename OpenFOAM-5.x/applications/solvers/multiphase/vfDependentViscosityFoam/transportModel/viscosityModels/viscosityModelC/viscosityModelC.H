@@ -163,7 +163,7 @@ public:
 
         // Derivative of viscosity with respect to volume fraction and shear rate
         virtual tmp<volScalarField> dMuDalpha() const = 0;
-        //virtual tmp<volScalarField> dMuDgamma() const = 0;
+        virtual tmp<volScalarField> dMuDgamma() const = 0;
 
 		//- Return the laminar viscosity for patch
 		tmp<scalarField> mu(const label patchi) const

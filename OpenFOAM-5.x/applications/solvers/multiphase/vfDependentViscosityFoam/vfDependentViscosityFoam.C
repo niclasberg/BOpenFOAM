@@ -247,12 +247,15 @@ int main(int argc, char *argv[])
 
 		    Info<< "Time = " << runTime.timeName() << nl << endl;
 
-		    #include "alphaEqnSubCycle.H"
-		    #include "alphaDiffusionEqn.H"
+			// Update the diffusivity before solving the transport equation
+			twoPhaseProperties.correct();
+			#include "alphaEqnSubCycle.H"
+			#include "alphaDiffusionEqn.H"
 
-		    twoPhaseProperties.correct();
+			// Update diffusivity and viscosity
+			twoPhaseProperties.correct();
 
-		    // --- Pressure-velocity PIMPLE corrector loop
+			// --- Pressure-velocity PIMPLE corrector loop
 		    while (pimple.loop()) {
 		        #include "UEqn.H"
 
@@ -271,6 +274,10 @@ int main(int argc, char *argv[])
 		    Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
 		        << "  ClockTime = " << runTime.elapsedClockTime() << " s"
 		        << nl << endl;
+
+			if(runTime.writeTime()) {
+				twoPhaseProperties.diffModel().flux(alpha1)->write();
+			}
 		}
 
 		Info<< "End\n" << endl;

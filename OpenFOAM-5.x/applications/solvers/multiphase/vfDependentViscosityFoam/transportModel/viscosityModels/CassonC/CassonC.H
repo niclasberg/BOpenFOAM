@@ -36,9 +36,10 @@ SourceFiles
 #ifndef CassonC_H
 #define CassonC_H
 
-#include "../viscosityModelC/viscosityModelC.H"
+#include "viscosityModelC.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
+#include "error.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -96,6 +97,16 @@ public:
 
         //- Read transportProperties dictionary
         bool read(const dictionary& viscosityProperties);
+
+        tmp<volScalarField> dMuDalpha() const override
+        {
+            notImplemented("CassonC::dMuDalpha()");
+        }
+
+        tmp<volScalarField> dMuDgamma() const override
+        {
+            notImplemented("CassonC::dMuDgamma()");
+        }
 };
 
 

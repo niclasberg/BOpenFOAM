@@ -14,8 +14,11 @@ class leightonAcrivos : public diffusionModel
 protected:
 	dimensionedScalar Db_;			// Brownian diffusion
 	dimensionedScalar a_;			// Particle radius
-	dimensionedScalar Kc_;		// 
+	dimensionedScalar Kgamma_;
+	dimensionedScalar Kalpha_;
 	dimensionedScalar Kmu_;
+	volScalarField Dalpha_;
+	volVectorField Dgamma_;
 	
 public:
     TypeName("leightonAcrivos");
@@ -24,13 +27,15 @@ public:
     virtual ~leightonAcrivos() {}
 
     //- Correct the diffusion model
-    virtual void correct() { }
+    void correct(const Foam::volScalarField & alpha) override;
 
 	//- Get the flux
 	virtual tmp<volVectorField> flux(const volScalarField &) const;
 
 	//- Divergence of flux
 	virtual tmp<fvScalarMatrix> divFlux(const volScalarField &) const;
+
+	scalarField noFluxBoundaryWeights(const fvPatch & patch) const override;
 };
 
 } // End namespace Foam
