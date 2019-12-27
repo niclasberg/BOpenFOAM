@@ -107,7 +107,6 @@ Foam::tmp<Foam::volScalarField> Foam::viscosityModels::QuemadaC::calcMu(const vo
     volScalarField gammaC = dimensionedScalar("oneOverTime", dimless/dimTime, 1.0) 
         * exp(-6.1508 + 27.923*alphaLim - 25.6 * pow(alphaLim, 2) + 3.697 * pow(alphaLim, 3));
 	
-    //quemadaCoefficients(limitedVF, k0, kinf, gammaC);
     return min(muMax_, mup_ * 
         pow(1.0 - 0.5 * alphaLim * (k0 + kinf*sqrt(strainRate(U) / gammaC)) / 
             (1.0 + sqrt(strainRate(U) / gammaC)), -2.0)
