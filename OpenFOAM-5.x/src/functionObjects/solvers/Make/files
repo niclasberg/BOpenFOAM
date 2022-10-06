@@ -1,3 +1,5 @@
 scalarTransport/scalarTransport.C
+powerLawHemolysis/powerLawHemolysis.C
+meshQualityGradient/meshQualityGradient.C
 
 LIB = $(FOAM_LIBBIN)/libsolverFunctionObjects
