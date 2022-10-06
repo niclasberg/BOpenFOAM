@@ -1,0 +1,8 @@
+fiusco-5.x/*
+swak4foam/maintainanceScripts/privateRequirements/
+linux64*/
+lnInclude/
+swak4foam/privateRequirements/bin
+swak4foam/privateRequirements/share
+swak4foam/privateRequirements/lib
+swak4foam/privateRequirements/compilation
