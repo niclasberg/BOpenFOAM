@@ -37,10 +37,10 @@
     const dimensionedScalar& rho1 = twoPhaseProperties.rho1();
     const dimensionedScalar& rho2 = twoPhaseProperties.rho2();
 
-    dimensionedScalar Dab(twoPhaseProperties.lookup("Dab"));
+    //dimensionedScalar Dab(twoPhaseProperties.lookup("Dab"));
 
     // Read the reciprocal of the turbulent Schmidt number
-    dimensionedScalar alphatab(twoPhaseProperties.lookup("alphatab"));
+    //dimensionedScalar alphatab(twoPhaseProperties.lookup("alphatab"));
 
     // Need to store rho for ddt(rho, U)
     volScalarField rho("rho", alpha1*rho1 + alpha2*rho2);

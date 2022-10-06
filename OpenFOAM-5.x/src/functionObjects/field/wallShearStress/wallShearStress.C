@@ -209,6 +209,9 @@ bool Foam::functionObjects::wallShearStress::execute()
             mesh_.lookupObject<icoModel>(turbulenceModel::propertiesName);
 
         Reff = model.devReff();
+
+		if(mesh_.foundObject<volScalarField>("rho"))
+			Reff.ref() *= mesh_.lookupObject<volScalarField>("rho");
     }
     else
     {

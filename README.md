@@ -2,19 +2,17 @@
 
 Modified version of OpenFOAM 5.x with added support for hematocrit dependent viscosity and platelet activation modelling.
 
-The following solvers have been added:
-* vfDependentViscosityFoam (see tutorials/multiphase/vfDependentViscosityFoam/ for example cases)
-* vfDependentViscosityLPTFoam
+The main contribution is the addition of the solver vfDependentViscosityFoam (see tutorials/multiphase/vfDependentViscosityFoam/ for example cases). Documentation about the implemented model and properties can be found at: https://www.mech.kth.se/~niber/docs/#/openfoam . In essence, the model corresponds to a one-fluid formulation with a hematocrit and shear rate dependent viscosity (multiple options are implemented such as Quemada, Walburn-Schneck and Casson). The hematocrit is solved through a convection-flux equation (the flux term can be modeled as Fickian, hematocrit dependent or with the Leighton & Acrivos model, taking shear-induced diffusion into account).
 
-Some postprocessing tools have also been added:
-* wallStressGradients - Computes wall shear stress (WSS) and gradients from the results of vfDependentViscosityFoam/vfDependentViscosityLPTFoam solvers.
-* steadyPlateletLPT - Platelet tracking and activation from a time-independent velocity field
-* plateletLPT - Platelet tracking and activation from a time-dependent solution
+Some function objects and post processing tools have also been implemented:
+* trackPlatelets - post processing program for tracking of platelets and the activation state (related to the probability of activation) along the pathlines. 
+* plateletLPT - Function object for platelet tracking in runtime.
+* vorticitySources - evaluates the terms of the vorticity transport equation over time.
 
 ## Compilation
 Compile OpenFOAM
 ```
-cd OpenFOAM
+cd OpenFOAM-5.x
 source etc/bashrc
 ./Allwmake
 ```

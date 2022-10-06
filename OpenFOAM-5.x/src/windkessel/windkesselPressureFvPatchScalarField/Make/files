@@ -1,0 +1,3 @@
+WindkesselPressureFvPatchScalarField.C
+
+LIB = $(FOAM_LIBBIN)/libwindkessel
