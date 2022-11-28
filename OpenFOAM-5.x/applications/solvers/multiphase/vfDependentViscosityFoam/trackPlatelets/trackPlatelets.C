@@ -25,10 +25,13 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
     if( ! isDir(outputFolder))
         mkDir(outputFolder);
     word vtkFileName = outputFolder + "/" + cloud.name() + timeName + ".vtk";
+    word csvFileName = outputFolder + "/" + cloud.name() + timeName + ".csv";
     Info << "Writing to " << vtkFileName << endl;
+    Info << "Writing CSV file to " << csvFileName << endl;
 
     // Create output stream
     std::ofstream os(vtkFileName.c_str(), std::iostream::binary);
+    // std::ofstream osCsv(csvFileName.c_str(), std::iostream::out);
 
     // Write header
     bool isBinary = true;
@@ -45,6 +48,11 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
     DynamicList<floatScalar> pas;
     DynamicList<floatScalar> stressRateHistory;
     DynamicList<floatScalar> tau;
+    DynamicList<floatScalar> Uc;
+    DynamicList<floatScalar> Re;
+    DynamicList<floatScalar> d;
+    DynamicList<floatScalar> rho;
+    DynamicList<floatScalar> cD;
 
     label i = 0;
     forAllConstIter(basicPlateletCloud, cloud, iter)
@@ -57,9 +65,15 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
         writeFuns::insert(p.age(), age);
 		writeFuns::insert(p.stressHistory(), stressHistory);
         writeFuns::insert(p.pas(), pas);
+        floatScalar pRe = p.Re(p.U(), p.d(), p.rhoc(), p.muc());
         writeFuns::insert(p.stressRateHistory(), stressRateHistory);
         writeFuns::insert(p.tau(), tau);
-
+        writeFuns::insert(p.Uc(), Uc);
+        writeFuns::insert(pRe, Re);
+        writeFuns::insert(p.d(), d);
+        writeFuns::insert(p.rho(), rho);
+        floatScalar pcD = pRe > 1000 ? 0.424 : 24.0 / pRe *(1.0 + 1.0/6.0*pow(pRe, 2.0/3.0));
+        writeFuns::insert(pcD, cD);
         i++;
     }
 
@@ -69,7 +83,7 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
 
     // Write point data
     if(cloud.size() > 0) {
-        label numFields = 8;
+        label numFields = 13;
         writeFuns::writePointDataHeader(os, cloud.size(), numFields);
         
         // Write fields
@@ -96,8 +110,39 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
 
         writeFieldHeader(os, "tau", cloud.size(), 6, "float");
         writeFuns::write(os, isBinary, tau);
+
+        writeFieldHeader(os, "fluidVelocity", cloud.size(), 3, "float");
+        writeFuns::write(os, isBinary, Uc);
+
+        writeFieldHeader(os, "Rep", cloud.size(), 1, "float");
+        writeFuns::write(os, isBinary, Re);
+
+        writeFieldHeader(os, "d", cloud.size(), 1, "float");
+        writeFuns::write(os, isBinary, d);
+
+        writeFieldHeader(os, "rho", cloud.size(), 1, "float");
+        writeFuns::write(os, isBinary, rho);
+
+        writeFieldHeader(os, "cD", cloud.size(), 1, "float");
+        writeFuns::write(os, isBinary, cD);
+
     }
     
+    // osCsv << "x,y,z,U,active,id,age,stressHistory,pas,stressRateHistory,tau,fluidVelocity,Rep,d,rho,cD" << endl;
+    // forAll(cD, i) {
+    //     os  << fField[i];
+
+    //         if (i > 0 && (i % 10) == 0)
+    //         {
+    //             os  << std::endl;
+    //         }
+    //         else
+    //         {
+    //             os  << ' ';
+    //         }
+    //     }
+    //     os << std::endl;
+    // }
 
     os.close();
 }

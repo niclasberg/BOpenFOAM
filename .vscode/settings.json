@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "writeFuns.H": "cpp",
+        "trackPlatelets.C": "cpp",
+        "writeFuns.C": "cpp",
+        "vorticitySources.H": "cpp",
+        "vorticitySources.C": "cpp",
+        "defineBasicPlateletParcel.C": "cpp",
+        "makeBasicPlateletParcelSubmodels.C": "cpp",
+        "PlateletParcel.C": "cpp",
+        "plateletLpt.C": "cpp",
+        "PlateletCloud.C": "cpp",
+        "twoPhaseSystem.C": "cpp",
+        "KinematicParcel.C": "cpp"
+    }
+}
