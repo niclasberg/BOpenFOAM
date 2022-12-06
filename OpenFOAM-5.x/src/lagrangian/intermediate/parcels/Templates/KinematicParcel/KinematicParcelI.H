@@ -93,7 +93,8 @@ inline Foam::KinematicParcel<ParcelType>::KinematicParcel
     rhoc_(0.0),
     Uc_(Zero),
     muc_(0.0)
-{}
+{
+}
 
 
 template<class ParcelType>
@@ -118,7 +119,8 @@ inline Foam::KinematicParcel<ParcelType>::KinematicParcel
     rhoc_(0.0),
     Uc_(Zero),
     muc_(0.0)
-{}
+{
+}
 
 
 template<class ParcelType>
@@ -151,7 +153,8 @@ inline Foam::KinematicParcel<ParcelType>::KinematicParcel
     rhoc_(0.0),
     Uc_(Zero),
     muc_(0.0)
-{}
+{
+}
 
 
 // * * * * * * * * * constantProperties Member Functions * * * * * * * * * * //
@@ -288,6 +291,24 @@ inline Foam::scalar Foam::KinematicParcel<ParcelType>::muc() const
     return muc_;
 }
 
+// template<class ParcelType>
+// inline const Foam::vector& Foam::KinematicParcel<ParcelType>::Fd() const
+// {
+//     return Fd_;
+// }
+
+// template<class ParcelType>
+// inline const Foam::vector& Foam::KinematicParcel<ParcelType>::Fl() const
+// {
+//     return Fl_;
+// }
+
+// template<class ParcelType>
+// inline const Foam::vector& Foam::KinematicParcel<ParcelType>::Fvm() const
+// {
+//     return Fvm_;
+// }
+
 
 template<class ParcelType>
 inline bool& Foam::KinematicParcel<ParcelType>::active()
@@ -357,6 +378,24 @@ inline Foam::vector& Foam::KinematicParcel<ParcelType>::UTurb()
 {
     return UTurb_;
 }
+
+// template<class ParcelType>
+// inline Foam::vector& Foam::KinematicParcel<ParcelType>::Fd()
+// {
+//     return Fd_;
+// }
+
+// template<class ParcelType>
+// inline Foam::vector& Foam::KinematicParcel<ParcelType>::Fl()
+// {
+//     return Fl_;
+// }
+
+// template<class ParcelType>
+// inline Foam::vector& Foam::KinematicParcel<ParcelType>::Fvm()
+// {
+//     return Fvm_;
+// }
 
 
 template<class ParcelType>

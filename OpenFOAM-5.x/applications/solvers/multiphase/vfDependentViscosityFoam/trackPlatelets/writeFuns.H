@@ -105,6 +105,7 @@ public:
     static void insert(const labelList&, DynamicList<label>&);
     template<class Type>
     static void insert(const List<Type>&, DynamicList<floatScalar>&);
+    static string vector2csv(const vector& vec);
 
 
 };

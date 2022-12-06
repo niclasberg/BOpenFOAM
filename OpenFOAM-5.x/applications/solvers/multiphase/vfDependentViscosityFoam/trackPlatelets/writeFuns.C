@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "writeFuns.H"
+#include <sstream>
 
 #if defined(__mips)
     #include <standards.h>
@@ -283,5 +284,23 @@ void Foam::writeFuns::insert(const labelList& src, DynamicList<label>& dest)
     dest.append(src);
 }
 
+Foam::string Foam::writeFuns::vector2csv(const vector& vec)
+{
+    std::ostringstream buf;
+    buf << vec[0];
+    std::string x = buf.str();
+    buf.str("");
+    buf.clear();
+    buf << vec[1];
+    std::string y = buf.str();
+    buf.str("");
+    buf.clear();
+    buf << vec[2];
+    std::string z = buf.str();
+    buf.str("");
+    buf.clear();
+    Foam::string out = Foam::string(x) + "," + Foam::string(y) + "," + Foam::string(z);
+    return out;
+}
 
 // ************************************************************************* //

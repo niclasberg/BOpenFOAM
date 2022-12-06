@@ -81,6 +81,15 @@ protected:
 		//- Stored value from last iteration
 		symmTensor tau_last_;
 
+        //- Drag force [N]
+        vector Fd_;
+
+        //- Lift force [N]
+        vector Fl_;
+
+        //- Virtual mass force [N]
+        vector Fvm_;
+
 public:
 
     // Static data members
@@ -199,6 +208,30 @@ public:
 			symmTensor& tau() { return tau_; }
             const symmTensor& tau_last() const { return tau_last_; }
 			symmTensor& tau_last() { return tau_last_; }
+            //- Return const access to instantaneous drag force (if present) [N]
+            inline const vector& Fd() const;
+
+            //- Return const access to instantaneous lift force (if present) [N]
+            inline const vector& Fl() const;
+
+            //- Return const access to instantaneous virtual mass force (if present) [N]
+            inline const vector& Fvm() const;
+
+            vector& Fd()
+            {
+                return Fd_;
+            }
+
+            vector& Fl()
+            {
+                return Fl_;
+            }
+
+            vector& Fvm()
+            {
+                return Fvm_;
+            }
+            
 
 
 		//- Main calculation loop

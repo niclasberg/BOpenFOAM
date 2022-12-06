@@ -25,10 +25,7 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
     if( ! isDir(outputFolder))
         mkDir(outputFolder);
     word vtkFileName = outputFolder + "/" + cloud.name() + timeName + ".vtk";
-    word csvFileName = outputFolder + "/" + cloud.name() + timeName + ".csv";
     Info << "Writing to " << vtkFileName << endl;
-    Info << "Writing CSV file to " << csvFileName << endl;
-
     // Create output stream
     std::ofstream os(vtkFileName.c_str(), std::iostream::binary);
     // std::ofstream osCsv(csvFileName.c_str(), std::iostream::out);
@@ -147,6 +144,48 @@ void writeCloudAsVTK(const basicPlateletCloud & cloud, word timeName)
     os.close();
 }
 
+void writeCloudAsCSV(const basicPlateletCloud & cloud, word timeName)
+{
+    fileName outputFolder = "CSV" / cloud.name();
+    if( ! isDir(outputFolder))
+        mkDir(outputFolder);
+    word csvFileName = outputFolder + "/" + cloud.name() + timeName + ".csv";
+    Info << "Writing CSV file to " << csvFileName << endl;
+
+    // Create output stream
+    std::ofstream os(csvFileName.c_str(), std::iostream::out);
+    os << "id,x,y,z,u,v,w,uf,vf,wf,Rep,rho,rhof,d,Dx,Dy,Dz,Lx,Ly,Lz,VMx,VMy,VMz" << std::endl;
+
+    label i = 0;
+    forAllConstIter(basicPlateletCloud, cloud, iter)
+    {
+        const basicPlateletParcel & p = iter();
+        os << p.origId() << ","
+           << writeFuns::vector2csv(p.position()) << ","
+           << writeFuns::vector2csv(p.U()) << ","
+           << writeFuns::vector2csv(p.Uc()) << ","
+           << p.Re(p.U(), p.d(), p.rhoc(), p.muc()) << ","
+           << p.rho() << ","
+           << p.rhoc() << ","
+           << p.d() << ","
+           << writeFuns::vector2csv(p.Fd()) << ","
+           << writeFuns::vector2csv(p.Fl()) << ","
+           << writeFuns::vector2csv(p.Fvm()) << std::endl;
+        // forceSuSp drag(Zero, 0.0);
+        // forceSuSp lift(Zero, 0.0);
+        // forceSuSp virtualMass(Zero, 0.0);
+        // forAll(forces,i)
+        // {
+        //     auto f = forces.operator[](i);
+        //     if (f.type() == "SphereDrag") {
+        //         drag = f.calcCoupled()
+        //     }
+        // }
+        i++;
+    }
+    os.close();
+}
+
 struct timePair {
     label timeIndex;
     scalar deltaT;
@@ -260,6 +299,7 @@ int main(int argc, char *argv[])
 
             plateletCloud.evolve();
             writeCloudAsVTK(plateletCloud, std::to_string(iter->timeIndex));
+            writeCloudAsCSV(plateletCloud, std::to_string(iter->timeIndex));
         }
     } else {
         FieldInterpolator<volVectorField> uInterp(mesh, U.name());
@@ -317,6 +357,7 @@ int main(int argc, char *argv[])
             }
             tLast = *iter;
             writeCloudAsVTK(plateletCloud, std::to_string(iter->timeIndex));
+            writeCloudAsCSV(plateletCloud, std::to_string(iter->timeIndex));
         }
     }
 

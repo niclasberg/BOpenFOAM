@@ -263,6 +263,15 @@ protected:
             //- Turbulent velocity fluctuation [m/s]
             vector UTurb_;
 
+            // //- Drag force [N]
+            // vector Fd_;
+
+            // //- Lift force [N]
+            // vector Fl_;
+
+            // //- Virtual mass force [N]
+            // vector Fvm_;
+
 
         // Cell-based quantities
 
@@ -448,6 +457,15 @@ public:
             //- Return const access to carrier viscosity [Pa.s]
             inline scalar muc() const;
 
+            // //- Return const access to instantaneous drag force (if present) [N]
+            // inline const vector& Fd() const;
+
+            // //- Return const access to instantaneous lift force (if present) [N]
+            // inline const vector& Fl() const;
+
+            // //- Return const access to instantaneous virtual mass force (if present) [N]
+            // inline const vector& Fvm() const;
+
 
         // Edit
 
@@ -480,6 +498,15 @@ public:
 
             //- Return access to turbulent velocity fluctuation
             inline vector& UTurb();
+
+            // //- Return access to instantaneous drag force (if present) [N]
+            // inline vector& Fd();
+
+            // //- Return access to instantaneous lift force (if present) [N]
+            // inline vector& Fl();
+
+            // //- Return access to instantaneous virtual mass force (if present) [N]
+            // inline vector& Fvm();
 
 
         // Helper functions
